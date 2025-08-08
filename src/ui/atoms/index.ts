@@ -1,3 +1,4 @@
+export { Badge, badgeVariants, type BadgeProps } from "./Badge";
 export { Button, buttonVariants, type ButtonProps } from "./Button";
 export { Dropdown, dropdownVariants, type DropdownOption, type DropdownProps } from "./Dropdown";
 export { Icon, iconMap, type IconName, type IconProps } from "./Icons";

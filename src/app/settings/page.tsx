@@ -50,7 +50,7 @@ export default function SettingsPage() {
       
       <main className="py-8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl mx-auto text-center">
+          <div className="text-center">
             <div className="bg-white rounded-xl border border-gray-200/80 shadow-sm p-12">
               <div className="mb-6">
                 <div className="w-16 h-16 bg-primary-light/20 rounded-full flex items-center justify-center mx-auto mb-4">

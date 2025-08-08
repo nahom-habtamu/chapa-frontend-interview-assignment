@@ -1,5 +1,6 @@
 import React from "react";
 import { Transaction } from "../../data/payment/types";
+import { Badge } from "../atoms/Badge";
 import { Button } from "../atoms/Button";
 import { Icon, type IconName } from "../atoms/Icons";
 import { Link } from "../atoms/Link";
@@ -37,25 +38,7 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
   showViewAllLink = false,
   viewAllHref = "/transactions",
 }) => {
-  const getStatusColor = (status: Transaction["status"]) => {
-    const colors = {
-      success: "text-green-700 bg-green-50 border-green-200 ring-green-600/20",
-      pending: "text-amber-700 bg-amber-50 border-amber-200 ring-amber-600/20",
-      failed: "text-red-700 bg-red-50 border-red-200 ring-red-600/20",
-      cancelled: "text-gray-700 bg-gray-50 border-gray-200 ring-gray-600/20",
-    };
-    return colors[status] || colors.pending;
-  };
 
-  const getStatusIcon = (status: Transaction["status"]): IconName => {
-    const icons = {
-      success: "check",
-      pending: "clock",
-      failed: "x",
-      cancelled: "x",
-    };
-    return icons[status] as IconName || "clock";
-  };
 
   const getTypeIcon = (type: Transaction["type"]): IconName => {
     const icons = {
@@ -200,19 +183,11 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
                   </div>
                 </TableCell>
                 <TableCell className="py-4 text-center">
-                  <span className={cn(
-                    "inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold border ring-1",
-                    getStatusColor(transaction.status)
-                  )}>
-                    <Icon 
-                      name={getStatusIcon(transaction.status)} 
-                      size="sm" 
-                      className="mr-1.5 -ml-0.5" 
-                    />
+                  <Badge variant={transaction.status} icon={true}>
                     <span className="hidden sm:inline">
                       {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
                     </span>
-                  </span>
+                  </Badge>
                 </TableCell>
                 <TableCell className="py-4 hidden md:table-cell">
                   <Text variant="body" className="text-gray-900">

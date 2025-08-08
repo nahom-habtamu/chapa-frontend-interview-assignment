@@ -4,6 +4,7 @@ import { useRecentTransactions, useWalletBalance } from "../../data/transaction/
 import { Icon } from "../../ui/atoms/Icons";
 import { Text } from "../../ui/atoms/Text";
 import { PaymentForm } from "../../ui/organisms/PaymentForm";
+import { TransactionModal } from "../../ui/organisms/TransactionModal";
 import { TransactionTable } from "../../ui/organisms/TransactionTable";
 import { VerifyTransactionForm } from "../../ui/organisms/VerifyTransactionForm";
 import { WalletCard } from "../../ui/organisms/WalletCard";
@@ -16,12 +17,20 @@ interface UserDashboardProps {
 
 export const UserDashboard: React.FC<UserDashboardProps> = ({ className }) => {
   const [activeTab, setActiveTab] = useState<TabType>("overview");
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data: walletBalance, isLoading: isLoadingBalance } = useWalletBalance();
   const { data: recentTransactions, isLoading: isLoadingTransactions } = useRecentTransactions(5);
 
   const handleViewTransaction = (transaction: Transaction) => {
-    console.log("View transaction:", transaction);
+    setSelectedTransaction(transaction);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedTransaction(null);
   };
 
   const handlePaymentSuccess = () => {
@@ -167,6 +176,13 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ className }) => {
           <VerifyTransactionForm onSuccess={handleVerificationSuccess} />
         </div>
       )}
+
+      {/* Transaction Modal */}
+      <TransactionModal
+        transaction={selectedTransaction}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 };

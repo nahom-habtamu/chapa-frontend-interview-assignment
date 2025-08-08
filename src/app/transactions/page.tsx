@@ -3,12 +3,14 @@
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useAuth } from "../../data/auth/use-auth";
+import { Transaction } from "../../data/payment/types";
 import { useTransactions } from "../../data/transaction/use-transactions";
 import { Button } from "../../ui/atoms/Button";
 import { Icon } from "../../ui/atoms/Icons";
 import { Text } from "../../ui/atoms/Text";
 import { Footer } from "../../ui/molecules/Footer";
 import { Navbar } from "../../ui/molecules/Navbar";
+import { TransactionModal } from "../../ui/organisms/TransactionModal";
 import { TransactionTable } from "../../ui/organisms/TransactionTable";
 
 export default function TransactionsPage() {
@@ -16,6 +18,8 @@ export default function TransactionsPage() {
   const { user, isLoading, isAuthenticated, logout } = useAuth();
   const { data: transactionData, isLoading: transactionsLoading } = useTransactions({ limit: 100 }); // Show more transactions
   const transactions = transactionData?.transactions || [];
+  const [selectedTransaction, setSelectedTransaction] = React.useState<Transaction | null>(null);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   React.useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -80,14 +84,24 @@ export default function TransactionsPage() {
             title="All Transactions"
             subtitle={`Showing ${transactions.length} transaction${transactions.length !== 1 ? 's' : ''}`}
             onViewTransaction={(transaction) => {
-              // TODO: Implement transaction details modal or page
-              console.log("View transaction:", transaction);
+              setSelectedTransaction(transaction);
+              setIsModalOpen(true);
             }}
           />
         </div>
       </main>
 
       <Footer />
+
+      {/* Transaction Modal */}
+      <TransactionModal
+        transaction={selectedTransaction}
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedTransaction(null);
+        }}
+      />
     </div>
   );
 }
