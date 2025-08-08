@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { useUsers } from "../../../data/admin";
+import { useBanks, useUsers } from "../../../data/admin";
 import { useAuth } from "../../../data/auth/use-auth";
 import { Button } from "../../../ui/atoms/Button";
 import { Icon } from "../../../ui/atoms/Icons";
@@ -12,6 +12,7 @@ interface AdminDashboardProps {
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ className }) => {
   const { users, loading: usersLoading, toggleUserStatus } = useUsers();
+  const { banks, loading: banksLoading, error: banksError } = useBanks();
   const { isSuperAdmin } = useAuth();
   const router = useRouter();
 
@@ -100,6 +101,64 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ className }) => 
           onToggleStatus={toggleUserStatus}
           loading={usersLoading}
         />
+        
+        {/* Banks Overview */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200/60 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <Text variant="h6" className="text-gray-900 font-semibold">
+                Partner Banks
+              </Text>
+              <Text variant="caption" className="text-gray-500">
+                {banksLoading ? "Loading banks..." : `${banks.length} banks available`}
+              </Text>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => router.push("/admin/banks")}
+            >
+              View All Banks
+            </Button>
+          </div>
+          
+          {banksLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="h-16 bg-gray-200 rounded-lg"></div>
+                </div>
+              ))}
+            </div>
+          ) : banksError ? (
+            <div className="text-center py-4">
+              <Icon name="alertCircle" size="md" className="text-red-500 mx-auto mb-2" />
+              <Text variant="caption" className="text-red-600">
+                Failed to load banks
+              </Text>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {banks.slice(0, 6).map((bank) => (
+                <div key={bank.id} className="flex items-center p-3 bg-gray-50 rounded-lg">
+                  <div className="h-8 w-8 rounded bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center">
+                    <Text variant="caption" className="text-white font-bold">
+                      {bank.code.substring(0, 2)}
+                    </Text>
+                  </div>
+                  <div className="ml-3 flex-1 min-w-0">
+                    <Text variant="body" className="text-gray-900 font-medium truncate">
+                      {bank.name}
+                    </Text>
+                    <Text variant="caption" className="text-gray-500">
+                      {bank.code}
+                    </Text>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

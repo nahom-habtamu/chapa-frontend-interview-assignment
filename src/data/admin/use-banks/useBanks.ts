@@ -1,50 +1,20 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createBank, deleteBank, getBanks, getBanksFromChapa, updateBank } from "./api";
-import { mockBanks } from "./mock-data";
-import { Bank } from "./types";
+import { useQuery } from "@tanstack/react-query";
+import { getBanksFromChapa } from "./api";
 
 export const useBanks = () => {
-  const queryClient = useQueryClient();
-
   const query = useQuery({
     queryKey: ["banks"],
     queryFn: async () => {
       try {
         const chapaResponse = await getBanksFromChapa();
-        return chapaResponse.data || mockBanks;
+        return chapaResponse.data;
       } catch (error) {
-        try {
-          return await getBanks();
-        } catch (internalError) {
-          console.warn("Both APIs failed, using mock data:", error, internalError);
-          return mockBanks;
-        }
+        console.warn("Failed to fetch banks from Chapa:", error);
+        throw error;
       }
     },
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
-  });
-
-  const createMutation = useMutation({
-    mutationFn: createBank,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["banks"] });
-    },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: ({ id, bank }: { id: string; bank: Partial<Bank> }) =>
-      updateBank(id, bank),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["banks"] });
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: deleteBank,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["banks"] });
-    },
   });
 
   return {
@@ -53,16 +23,5 @@ export const useBanks = () => {
     error: query.error?.message || null,
     isError: query.isError,
     refetch: query.refetch,
-
-    createBank: createMutation.mutate,
-    updateBank: updateMutation.mutate,
-    deleteBank: deleteMutation.mutate,
-
-    isCreating: createMutation.isPending,
-    isUpdating: updateMutation.isPending,
-    isDeleting: deleteMutation.isPending,
-    createError: createMutation.error?.message,
-    updateError: updateMutation.error?.message,
-    deleteError: deleteMutation.error?.message,
   };
 };

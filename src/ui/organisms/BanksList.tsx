@@ -1,13 +1,7 @@
 import React from "react";
+import { Bank } from "../../data/admin/use-banks/types";
 import { Icon } from "../atoms/Icons";
 import { Text } from "../atoms/Text";
-
-export interface Bank {
-  id: string;
-  name: string;
-  code: string;
-  logo?: string;
-}
 
 interface BanksListProps {
   banks: Bank[];

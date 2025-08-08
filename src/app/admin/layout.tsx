@@ -16,6 +16,11 @@ const getAdminNavItems = (isSuperAdmin: boolean): NavItem[] => [
     href: "/admin/users",
     icon: "user" as const,
   },
+  {
+    label: "Banks",
+    href: "/admin/banks",
+    icon: "creditCard" as const,
+  },
   ...(isSuperAdmin ? [{
     label: "Manage Admins",
     href: "/admin/manage-admins",
