@@ -116,7 +116,10 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             label="Amount"
-            {...register("amount")}
+            type="number"
+            step="0.01"
+            min={0}
+            {...register("amount", { valueAsNumber: true })}
             error={errors.amount?.message}
             placeholder="0.00"
           />

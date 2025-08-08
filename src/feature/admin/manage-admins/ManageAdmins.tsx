@@ -45,7 +45,7 @@ export const ManageAdmins: React.FC<ManageAdminsProps> = ({ className }) => {
       createAdmin({
         name: formData.name,
         email: formData.email,
-        role: "admin",
+        role: formData.role as "admin" | "super_admin",
         isActive: true,
         isDeactivated: false,
       });

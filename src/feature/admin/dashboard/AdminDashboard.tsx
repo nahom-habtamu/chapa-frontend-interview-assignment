@@ -36,46 +36,65 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ className }) => 
     <div className={className}>
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <Text variant="h2" className="text-gray-900 font-bold">
-              {isSuperAdmin() ? "Super Admin Dashboard" : "Admin Dashboard"}
-            </Text>
-            <Text variant="body" className="text-gray-600 mt-2">
-              {isSuperAdmin() 
-                ? "Complete system oversight and administrative controls" 
-                : "Monitor users, payments, and system health"
-              }
-            </Text>
-          </div>
-          {isSuperAdmin() && (
-            <div className="flex space-x-3">
-              <Button 
-                variant="outline" 
-                className="flex items-center space-x-2"
-                onClick={() => router.push("/admin/manage-admins")}
-              >
-                <Icon name="shield" size="sm" />
-                <span>Manage Admins</span>
-              </Button>
-              <Button 
-                className="flex items-center space-x-2"
-                onClick={() => router.push("/admin/transfers")}
-              >
-                <Icon name="arrowUpRight" size="sm" />
-                <span>Transfer Center</span>
-              </Button>
+        {isSuperAdmin() ? (
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-purple-600 via-fuchsia-600 to-pink-600 text-white">
+            <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
+            <div className="absolute -bottom-8 -left-8 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
+            <div className="relative p-6 sm:p-8">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="flex items-start gap-3">
+                  <div className="rounded-xl bg-white/20 p-2">
+                    <Icon name="crown" size="lg" className="text-white" />
+                  </div>
+                  <div>
+                    <Text variant="h2" className="text-white font-bold">
+                      Super Admin Dashboard
+                    </Text>
+                    <Text variant="body" className="text-white/90 mt-1">
+                      Complete system oversight and administrative controls
+                    </Text>
+                  </div>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button 
+                    variant="outline" 
+                    className="flex items-center space-x-2 border-white/30 text-white hover:bg-white/10"
+                    onClick={() => router.push("/admin/manage-admins")}
+                  >
+                    <Icon name="shield" size="sm" />
+                    <span>Manage Admins</span>
+                  </Button>
+                  <Button 
+                    className="flex items-center space-x-2 bg-white text-purple-700 hover:bg-white/90"
+                    onClick={() => router.push("/admin/transfers")}
+                  >
+                    <Icon name="arrowUpRight" size="sm" />
+                    <span>Transfer Center</span>
+                  </Button>
+                </div>
+              </div>
             </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between">
+            <div>
+              <Text variant="h2" className="text-gray-900 font-bold">
+                Admin Dashboard
+              </Text>
+              <Text variant="body" className="text-gray-600 mt-2">
+                Monitor users, payments, and system health
+              </Text>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {stats.map((stat) => (
           <div
             key={stat.title}
-            className="bg-white rounded-xl shadow-sm border border-gray-200/60 p-6"
+            className="bg-white rounded-xl shadow-sm border border-gray-200/60 p-6 hover:shadow-md transition-shadow"
           >
             <div className="flex items-center justify-between">
               <div>
