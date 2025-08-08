@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { useCheckTransferStatus, useInitiateTransfer, useTransfers, type TransferStatusResponse } from "../../../data/admin";
+import { formatCurrency, formatDate, getStatusColor, useTransferInitiation, useTransfers, useTransferVerification, type TransferInitiateFormData } from "../../../data/admin";
 import { useAuth } from "../../../data/auth/use-auth";
 import { Button } from "../../../ui/atoms/Button";
 import { Icon } from "../../../ui/atoms/Icons";
-import { Input } from "../../../ui/atoms/Input";
 import { Text } from "../../../ui/atoms/Text";
-import { BaseModal } from "../../../ui/molecules";
+import { TransferInitiationModal } from "../../../ui/organisms";
 
 interface AdminTransfersProps {
   className?: string;
@@ -14,22 +13,27 @@ interface AdminTransfersProps {
 export const AdminTransfers: React.FC<AdminTransfersProps> = ({ className }) => {
   const { isSuperAdmin, hasRole } = useAuth();
   const [isInitiateModalOpen, setIsInitiateModalOpen] = useState(false);
-  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
-  const [transferId, setTransferId] = useState("");
-  const [statusResult, setStatusResult] = useState<TransferStatusResponse | { error: string } | null>(null);
-
-  const [formData, setFormData] = useState({
-    amount: "",
-    currency: "ETB",
-    recipient: "",
-    accountNumber: "",
-    bankCode: "",
-    reason: "",
-  });
+  const [lastTransferReference, setLastTransferReference] = useState<string>("");
 
   const { transfers, loading: transfersLoading } = useTransfers();
-  const initiateMutation = useInitiateTransfer();
-  const statusMutation = useCheckTransferStatus();
+  const { 
+    form, 
+    banks, 
+    banksLoading, 
+    initiateTransfer, 
+    isLoading: isInitiating, 
+    error: initiateError, 
+    resetForm 
+  } = useTransferInitiation();
+  
+  const { 
+    verifyTransfer, 
+    verifyingReference, 
+    verificationResult, 
+    clearVerificationResult
+  } = useTransferVerification();
+
+
 
   if (!hasRole(["admin", "super_admin"])) {
     return (
@@ -47,75 +51,26 @@ export const AdminTransfers: React.FC<AdminTransfersProps> = ({ className }) => 
     );
   }
 
-  const handleInitiateTransfer = async () => {
-    if (!formData.amount || !formData.recipient || !formData.accountNumber) return;
-
+  const handleInitiateTransfer = async (data: TransferInitiateFormData) => {
     try {
-      await initiateMutation.mutateAsync({
-        amount: parseFloat(formData.amount),
-        currency: formData.currency,
-        recipient: formData.recipient,
-        accountNumber: formData.accountNumber,
-        bankCode: formData.bankCode,
-        reason: formData.reason,
-      });
-
-      setFormData({
-        amount: "",
-        currency: "ETB",
-        recipient: "",
-        accountNumber: "",
-        bankCode: "",
-        reason: "",
-      });
+      const result = await initiateTransfer(data);
+      if (result?.reference) {
+        setLastTransferReference(result.reference);
+        console.log("Transfer initiated successfully with reference:", result.reference);
+      }
+      resetForm();
       setIsInitiateModalOpen(false);
     } catch (error) {
       console.error("Transfer initiation failed:", error);
     }
   };
 
-  const handleCheckStatus = async () => {
-    if (!transferId) return;
-
+  const handleVerifyTransfer = async (reference: string) => {
     try {
-      const result = await statusMutation.mutateAsync(transferId);
-      setStatusResult(result);
+      await verifyTransfer(reference);
     } catch (error) {
-      setStatusResult({ error: error instanceof Error ? error.message : "Failed to check status" });
+      console.error("Transfer verification failed:", error);
     }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "bg-green-100 text-green-800";
-      case "processing":
-        return "bg-yellow-100 text-yellow-800";
-      case "pending":
-        return "bg-blue-100 text-blue-800";
-      case "failed":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currency === "ETB" ? "ETB" : "USD",
-      minimumFractionDigits: 2,
-    }).format(amount);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(new Date(dateString));
   };
 
   const totalTransfers = transfers.length;
@@ -130,35 +85,80 @@ export const AdminTransfers: React.FC<AdminTransfersProps> = ({ className }) => 
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <Text variant="h2" className="text-gray-900 font-bold">
-              Transfer Management
+            <Text variant="h3" className="font-bold text-gray-900">
+              Transfers
             </Text>
             <Text variant="body" className="text-gray-600 mt-2">
               Initiate transfers and monitor transaction status
             </Text>
           </div>
           <div className="flex space-x-3">
-            <Button 
-              variant="outline"
-              onClick={() => setIsStatusModalOpen(true)}
-              className="flex items-center space-x-2"
-            >
-              <Icon name="search" size="sm" />
-              <span>Check Status</span>
-            </Button>
             {isSuperAdmin() && (
               <Button 
                 onClick={() => setIsInitiateModalOpen(true)}
                 className="flex items-center space-x-2"
-                disabled={initiateMutation.isPending}
+                disabled={isInitiating}
               >
                 <Icon name="arrowUpRight" size="sm" />
-                <span>{initiateMutation.isPending ? "Processing..." : "Initiate Transfer"}</span>
+                <span>{isInitiating ? "Processing..." : "Initiate Transfer"}</span>
               </Button>
             )}
           </div>
         </div>
       </div>
+
+      {/* Success Message */}
+      {lastTransferReference && (
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <div className="flex items-center">
+            <Icon name="checkCircle" size="sm" className="text-green-500 mr-2" />
+            <Text variant="body" className="text-green-700">
+              Transfer initiated successfully! Reference: <span className="font-mono">{lastTransferReference}</span>
+            </Text>
+          </div>
+        </div>
+      )}
+
+      {/* Verification Result */}
+      {verificationResult && (
+        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <Icon name="search" size="sm" className="text-blue-500 mr-2" />
+              <Text variant="body" className="text-blue-700 font-semibold">
+                Verification Result
+              </Text>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={clearVerificationResult}
+            >
+              <Icon name="x" size="sm" />
+            </Button>
+          </div>
+          <div className="mt-3 space-y-2">
+            <div className="flex justify-between">
+              <Text variant="caption" className="text-blue-600">Transfer ID:</Text>
+              <Text variant="body" className="font-mono text-sm">{verificationResult.transfer_id}</Text>
+            </div>
+            <div className="flex justify-between">
+              <Text variant="caption" className="text-blue-600">Status:</Text>
+              <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(verificationResult.status)}`}>
+                {verificationResult.status}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <Text variant="caption" className="text-blue-600">Amount:</Text>
+              <Text variant="body">{formatCurrency(verificationResult.amount, verificationResult.currency)}</Text>
+            </div>
+            <div className="flex justify-between">
+              <Text variant="caption" className="text-blue-600">Recipient:</Text>
+              <Text variant="body">{verificationResult.recipient}</Text>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -232,7 +232,7 @@ export const AdminTransfers: React.FC<AdminTransfersProps> = ({ className }) => 
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50/80">
+              <thead className="bg-gray-50/50">
                 <tr>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Transfer ID
@@ -292,12 +292,17 @@ export const AdminTransfers: React.FC<AdminTransfersProps> = ({ className }) => 
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => {
-                          setTransferId(transfer.id);
-                          setIsStatusModalOpen(true);
-                        }}
+                        onClick={() => handleVerifyTransfer(transfer.reference)}
+                        disabled={verifyingReference === transfer.reference}
                       >
-                        Check Status
+                        {verifyingReference === transfer.reference ? (
+                          <>
+                            <Icon name="refresh" size="sm" className="mr-2 animate-spin" />
+                            Verifying...
+                          </>
+                        ) : (
+                          "Verify"
+                        )}
                       </Button>
                     </td>
                   </tr>
@@ -308,201 +313,17 @@ export const AdminTransfers: React.FC<AdminTransfersProps> = ({ className }) => 
         )}
       </div>
 
-      {/* Initiate Transfer Modal */}
-      <BaseModal
+      {/* Transfer Initiation Modal */}
+      <TransferInitiationModal
         isOpen={isInitiateModalOpen}
         onClose={() => setIsInitiateModalOpen(false)}
-        title="Initiate Transfer"
-        headerIcon="arrowUpRight"
-        size="lg"
-        actions={
-          <>
-            <Button variant="outline" onClick={() => setIsInitiateModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleInitiateTransfer} disabled={initiateMutation.isPending}>
-              {initiateMutation.isPending ? "Processing..." : "Initiate Transfer"}
-            </Button>
-          </>
-        }
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Amount
-            </label>
-            <Input
-              type="number"
-              value={formData.amount}
-              onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-              placeholder="Enter amount"
-              className="w-full"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Currency
-            </label>
-            <select
-              value={formData.currency}
-              onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-            >
-              <option value="ETB">ETB</option>
-              <option value="USD">USD</option>
-            </select>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Recipient Name
-            </label>
-            <Input
-              type="text"
-              value={formData.recipient}
-              onChange={(e) => setFormData({ ...formData, recipient: e.target.value })}
-              placeholder="Enter recipient name"
-              className="w-full"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Account Number
-            </label>
-            <Input
-              type="text"
-              value={formData.accountNumber}
-              onChange={(e) => setFormData({ ...formData, accountNumber: e.target.value })}
-              placeholder="Enter account number"
-              className="w-full"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Bank Code
-            </label>
-            <Input
-              type="text"
-              value={formData.bankCode}
-              onChange={(e) => setFormData({ ...formData, bankCode: e.target.value })}
-              placeholder="e.g., CBE, DASH, BOA"
-              className="w-full"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Transfer Reason
-            </label>
-            <Input
-              type="text"
-              value={formData.reason}
-              onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
-              placeholder="Enter transfer reason"
-              className="w-full"
-            />
-          </div>
-        </div>
-
-        {initiateMutation.error && (
-          <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <Text variant="caption" className="text-red-600">
-              {initiateMutation.error.message}
-            </Text>
-          </div>
-        )}
-      </BaseModal>
-
-      {/* Status Check Modal */}
-      <BaseModal
-        isOpen={isStatusModalOpen}
-        onClose={() => {
-          setIsStatusModalOpen(false);
-          setStatusResult(null);
-          setTransferId("");
-        }}
-        title="Check Transfer Status"
-        headerIcon="search"
-        size="md"
-        actions={
-          <Button variant="outline" onClick={() => {
-            setIsStatusModalOpen(false);
-            setStatusResult(null);
-            setTransferId("");
-          }}>
-            Close
-          </Button>
-        }
-      >
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Transfer ID
-            </label>
-            <div className="flex space-x-2">
-              <Input
-                type="text"
-                value={transferId}
-                onChange={(e) => setTransferId(e.target.value)}
-                placeholder="Enter transfer ID"
-                className="flex-1"
-              />
-              <Button 
-                onClick={handleCheckStatus} 
-                disabled={statusMutation.isPending || !transferId}
-                size="sm"
-              >
-                {statusMutation.isPending ? "Checking..." : "Check"}
-              </Button>
-            </div>
-          </div>
-          
-          {statusMutation.error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-              <Text variant="caption" className="text-red-600">
-                {statusMutation.error.message}
-              </Text>
-            </div>
-          )}
-
-          {statusResult && (
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <Text variant="h6" className="font-semibold text-gray-900 mb-3">
-                Status Result
-              </Text>
-              {"error" in statusResult ? (
-                <Text variant="body" className="text-red-600">
-                  {statusResult.error}
-                </Text>
-              ) : (
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <Text variant="caption" className="text-gray-500">Transfer ID:</Text>
-                    <Text variant="body" className="font-mono text-sm">{statusResult.transfer_id}</Text>
-                  </div>
-                  <div className="flex justify-between">
-                    <Text variant="caption" className="text-gray-500">Status:</Text>
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(statusResult.status)}`}>
-                      {statusResult.status}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <Text variant="caption" className="text-gray-500">Amount:</Text>
-                    <Text variant="body">{formatCurrency(statusResult.amount, statusResult.currency)}</Text>
-                  </div>
-                  <div className="flex justify-between">
-                    <Text variant="caption" className="text-gray-500">Recipient:</Text>
-                    <Text variant="body">{statusResult.recipient}</Text>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </BaseModal>
+        onSubmit={handleInitiateTransfer}
+        isLoading={isInitiating}
+        error={initiateError}
+        banks={banks}
+        banksLoading={banksLoading}
+        form={form}
+      />
     </div>
   );
 };

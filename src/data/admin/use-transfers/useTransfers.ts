@@ -1,10 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { checkTransferStatus, getTransfers, initiateTransfer } from "./api";
+import { checkTransferStatus, initiateTransfer } from "./api";
+import { mockTransfers } from "./mock-data";
+import { addTransferToStorage, getTransfersFromStorage } from "./storage";
 
 export const useTransfers = () => {
   const query = useQuery({
     queryKey: ["transfers"],
-    queryFn: getTransfers,
+    queryFn: async () => {
+      const storedTransfers = getTransfersFromStorage();
+      return [...storedTransfers, ...mockTransfers];
+    },
     staleTime: 2 * 60 * 1000,
   });
 
@@ -22,14 +27,20 @@ export const useInitiateTransfer = () => {
 
   return useMutation({
     mutationFn: initiateTransfer,
-    onSuccess: () => {
+    onSuccess: (newTransfer) => {
+      addTransferToStorage(newTransfer);
       queryClient.invalidateQueries({ queryKey: ["transfers"] });
     },
   });
 };
 
 export const useCheckTransferStatus = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: checkTransferStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["transfers"] });
+    },
   });
 };

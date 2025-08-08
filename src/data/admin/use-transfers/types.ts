@@ -7,6 +7,7 @@ export interface Transfer {
   bankCode: string;
   status: "pending" | "processing" | "completed" | "failed";
   createdAt: string;
+  updated_at?: string;
   reference: string;
   reason?: string;
 }
