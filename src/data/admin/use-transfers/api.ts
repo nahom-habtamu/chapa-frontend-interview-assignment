@@ -1,5 +1,5 @@
 import axios from "axios";
-import { apiClient } from "../../common/api-client";
+import { chapaApiClient } from "../../common/chapa-api-client";
 import { mockTransfers } from "./mock-data";
 import { Transfer, TransferInitiateData, TransferStatusResponse } from "./types";
 
@@ -12,8 +12,9 @@ export const getTransfers = async (): Promise<Transfer[]> => {
 
 export const initiateTransfer = async (data: TransferInitiateData): Promise<Transfer> => {
   try {
-    const response = await apiClient.post("/transfer", {
-      amount: data.amount.toString(),
+    // Chapa transfer endpoint via proxy (example paths; adjust to real ones if needed)
+    const response = await chapaApiClient.post("/transfers", {
+      amount: data.amount,
       currency: data.currency,
       recipient: data.recipient,
       account_number: data.accountNumber,
@@ -32,7 +33,7 @@ export const initiateTransfer = async (data: TransferInitiateData): Promise<Tran
 
 export const checkTransferStatus = async (transferId: string): Promise<TransferStatusResponse> => {
   try {
-    const response = await apiClient.get(`/transfer/${transferId}`);
+    const response = await chapaApiClient.get(`/transfers/${transferId}`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

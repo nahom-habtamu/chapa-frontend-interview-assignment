@@ -22,6 +22,8 @@ export interface ChapaInitializeResponse {
   data: {
     checkout_url: string;
   };
+  // App-added field to track the tx_ref used for this initialization
+  txRef?: string;
 }
 
 export interface PaymentInitializationData {

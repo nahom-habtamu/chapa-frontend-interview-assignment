@@ -1,16 +1,40 @@
 import { Transaction, WalletBalance } from "./types";
 
+const STORAGE_KEY = "chapa_transactions";
+
+function readTransactionsFromStorage(): Transaction[] {
+  if (typeof window === "undefined") return [];
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return [];
+  try {
+    return JSON.parse(raw) as Transaction[];
+  } catch {
+    return [];
+  }
+}
+
+function writeTransactionsToStorage(transactions: Transaction[]): void {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+}
+
+async function ensureSeeded(): Promise<void> {
+  if (typeof window === "undefined") return;
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) {
+    const { mockTransactions } = await import("./mock-data");
+    writeTransactionsToStorage(mockTransactions);
+  }
+}
+
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const getTransactions = async (userId?: string): Promise<Transaction[]> => {
-  await delay(600);
-  const { mockTransactions } = await import("./mock-data");
-
-  if (!userId) {
-    return mockTransactions;
-  }
-
-  return mockTransactions.filter(transaction => transaction.userId === userId);
+  await delay(300);
+  await ensureSeeded();
+  const all = readTransactionsFromStorage();
+  if (!userId) return all;
+  return all.filter((t) => t.userId === userId);
 };
 
 
@@ -39,19 +63,50 @@ export const getWalletBalance = async (userId?: string): Promise<WalletBalance> 
 
 
 export const cancelTransaction = async (id: string, userId?: string): Promise<Transaction> => {
-  await delay(600);
-  const { mockTransactions } = await import("./mock-data");
-
-  const transaction = mockTransactions.find(t => t.id === id);
-
-  if (!transaction) {
-    throw new Error("Transaction not found");
-  }
-
-
+  await delay(300);
+  await ensureSeeded();
+  const all = readTransactionsFromStorage();
+  const idx = all.findIndex((t) => t.id === id);
+  if (idx === -1) throw new Error("Transaction not found");
+  const transaction = all[idx];
   if (userId && transaction.userId !== userId) {
     throw new Error("You can only cancel your own transactions");
   }
+  const updated: Transaction = { ...transaction, status: "cancelled", updated_at: new Date().toISOString() };
+  all[idx] = updated;
+  writeTransactionsToStorage(all);
+  return updated;
+};
 
-  return { ...transaction, status: "cancelled" };
+export interface AppendTransactionParams {
+  userId: string;
+  amount: number;
+  currency: string;
+  reference: string;
+  description?: string;
+  recipient?: string;
+  type?: Transaction["type"]; // defaults to 'payment'
+  status?: Transaction["status"]; // defaults to 'pending'
+}
+
+export const appendTransaction = async (params: AppendTransactionParams): Promise<Transaction> => {
+  await ensureSeeded();
+  const now = new Date().toISOString();
+  const all = readTransactionsFromStorage();
+  const newTx: Transaction = {
+    id: Date.now().toString(),
+    userId: params.userId,
+    amount: params.amount,
+    currency: params.currency,
+    status: params.status ?? "pending",
+    type: params.type ?? "payment",
+    description: params.description ?? "Payment transaction",
+    reference: params.reference,
+    recipient: params.recipient ?? "Merchant",
+    created_at: now,
+    updated_at: now,
+  };
+  const updated = [newTx, ...all];
+  writeTransactionsToStorage(updated);
+  return newTx;
 };

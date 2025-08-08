@@ -42,7 +42,8 @@ export const initializePayment = async (data: PaymentInitializationData): Promis
       chapaRequest
     );
 
-    return response.data;
+    // Attach txRef so downstream can persist a pending transaction
+    return { ...response.data, txRef };
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data?.message || "Failed to initialize payment");

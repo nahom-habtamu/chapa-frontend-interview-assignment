@@ -1,15 +1,18 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
+import { useCurrentUser } from "../../auth/use-auth";
+import { appendTransaction } from "../use-transactions/api";
 import { initializePayment } from "./api";
 import { initializePaymentSchema, quickPaymentSchema, type InitializePaymentData, type QuickPaymentData } from "./schema";
 import { PaymentInitializationData } from "./types";
 
 export const useInitializePayment = () => {
   const queryClient = useQueryClient();
+  const { user } = useCurrentUser();
 
   const form = useForm<InitializePaymentData>({
-    resolver: zodResolver(initializePaymentSchema),
+    resolver: zodResolver(initializePaymentSchema) as unknown as Resolver<InitializePaymentData>,
     defaultValues: {
       amount: 0,
       currency: "ETB",
@@ -25,8 +28,21 @@ export const useInitializePayment = () => {
     mutationFn: async (data: PaymentInitializationData) => {
       return await initializePayment(data);
     },
-    onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+    onSuccess: async (response, variables) => {
+      if (user?.id && response.txRef) {
+        await appendTransaction({
+          userId: user.id,
+          amount: variables.amount,
+          currency: variables.currency,
+          description: variables.description,
+          reference: response.txRef,
+          type: "payment",
+          status: "pending",
+        });
+        queryClient.invalidateQueries({ queryKey: ["transactions", user.id] });
+      } else {
+        queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      }
 
       if (response.data.checkout_url) {
         window.open(response.data.checkout_url, "_blank");
