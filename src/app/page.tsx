@@ -6,19 +6,24 @@ import { useAuth } from "../data/auth/use-auth";
 
 export default function Home() {
   const router = useRouter();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user, hasRole } = useAuth();
 
   React.useEffect(() => {
     if (!isLoading) {
-      if (isAuthenticated) {
-        router.push("/dashboard");
+      if (isAuthenticated && user) {
+        if (hasRole(["super_admin", "admin"])) {
+          router.push("/admin/dashboard");
+        } else if (hasRole("user")) {
+          router.push("/user/dashboard");
+        } else {
+          router.push("/user/dashboard");
+        }
       } else {
         router.push("/login");
       }
     }
-  }, [isLoading, isAuthenticated, router]);
+  }, [isLoading, isAuthenticated, user, hasRole, router]);
 
-  // Show loading spinner while checking authentication
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="text-center">

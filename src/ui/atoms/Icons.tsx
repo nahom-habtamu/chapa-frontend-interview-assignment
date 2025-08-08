@@ -4,12 +4,14 @@ import {
   ArrowUpRight,
   Bell,
   Check,
+  CheckCircle,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
   ChevronUp,
   Clock,
   CreditCard,
+  Crown,
   DollarSign,
   Download,
   Edit,
@@ -31,6 +33,9 @@ import {
   TrendingUp,
   Upload,
   User,
+  UserCheck,
+  UserPlus,
+  Users,
   Wallet,
   X,
   type LucideIcon,
@@ -38,11 +43,15 @@ import {
 
 export type IconName = 
   | "user"
+  | "users"
+  | "userCheck"
+  | "userPlus"
   | "wallet"
   | "creditCard"
   | "arrowUpRight"
   | "arrowDownLeft"
   | "check"
+  | "checkCircle"
   | "x"
   | "alertCircle"
   | "chevronDown"
@@ -60,6 +69,7 @@ export type IconName =
   | "trendingUp"
   | "clock"
   | "shield"
+  | "crown"
   | "eye"
   | "eyeOff"
   | "search"
@@ -74,11 +84,15 @@ export type IconName =
 
 const iconMap: Record<IconName, LucideIcon> = {
   user: User,
+  users: Users,
+  userCheck: UserCheck,
+  userPlus: UserPlus,
   wallet: Wallet,
   creditCard: CreditCard,
   arrowUpRight: ArrowUpRight,
   arrowDownLeft: ArrowDownLeft,
   check: Check,
+  checkCircle: CheckCircle,
   x: X,
   alertCircle: AlertCircle,
   chevronDown: ChevronDown,
@@ -96,6 +110,7 @@ const iconMap: Record<IconName, LucideIcon> = {
   trendingUp: TrendingUp,
   clock: Clock,
   shield: Shield,
+  crown: Crown,
   eye: Eye,
   eyeOff: EyeOff,
   search: Search,

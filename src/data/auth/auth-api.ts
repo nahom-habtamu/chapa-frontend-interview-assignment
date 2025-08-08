@@ -1,6 +1,5 @@
 import { AuthResponse, LoginCredentials, User } from "./types";
 
-// Mock users database
 const mockUsers: User[] = [
   {
     id: "1",

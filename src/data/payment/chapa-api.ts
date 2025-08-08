@@ -52,3 +52,29 @@ export const getBanks = async () => {
     throw new Error("Network error occurred");
   }
 };
+
+// Transfer Initialization - Real Chapa API call
+export const initializeTransfer = async (data: string) => {
+  try {
+    const response = await chapaApi.post("/transfer", data);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "Failed to initialize transfer");
+    }
+    throw new Error("Network error occurred");
+  }
+};
+
+// Transfer Status Check - Real Chapa API call
+export const checkTransferStatus = async (transferId: string) => {
+  try {
+    const response = await chapaApi.get(`/transfer/${transferId}`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "Failed to check transfer status");
+    }
+    throw new Error("Network error occurred");
+  }
+};

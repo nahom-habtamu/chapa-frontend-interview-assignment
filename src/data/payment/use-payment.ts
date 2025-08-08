@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-import { getBanks, initializePayment, verifyTransaction } from "./chapa-api";
+import { initializePayment, verifyTransaction } from "./chapa-api";
 import { paymentInitSchema, verifyTransactionSchema, type PaymentInitFormData, type VerifyTransactionFormData } from "./types";
 
 // Initialize Payment Hook
@@ -96,12 +96,3 @@ export const useVerifyTransaction = () => {
   };
 };
 
-// Get Banks Hook
-export const useBanks = () => {
-  return useQuery({
-    queryKey: ["banks"],
-    queryFn: getBanks,
-    staleTime: 10 * 60 * 1000, // 10 minutes
-    retry: 2,
-  });
-};

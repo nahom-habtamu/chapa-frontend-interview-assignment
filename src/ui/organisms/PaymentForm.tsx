@@ -1,6 +1,7 @@
 import React from "react";
 import { useInitializePayment } from "../../data/payment/use-payment";
 import { Button } from "../atoms/Button";
+
 import { Dropdown } from "../atoms/Dropdown";
 import { Icon } from "../atoms/Icons";
 import { Input } from "../atoms/Input";
@@ -10,11 +11,16 @@ import { cn } from "../utils/cn";
 interface PaymentFormProps {
   className?: string;
   onSuccess?: () => void;
+  currencyOptions?: Array<{ value: string; label: string }>;
 }
 
 export const PaymentForm: React.FC<PaymentFormProps> = ({
   className,
   onSuccess,
+  currencyOptions = [
+    { value: "ETB", label: "Ethiopian Birr (ETB)" },
+    { value: "USD", label: "US Dollar (USD)" },
+  ],
 }) => {
   const {
     form,
@@ -31,10 +37,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
     setValue,
   } = form;
 
-  const currencyOptions = [
-    { value: "ETB", label: "Ethiopian Birr (ETB)" },
-    { value: "USD", label: "US Dollar (USD)" },
-  ];
+
 
   React.useEffect(() => {
     if (isSuccess) {

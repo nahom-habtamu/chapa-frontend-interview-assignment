@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// Chapa API types based on https://developer.chapa.co
 export interface ChapaInitializeRequest {
   amount: string;
   currency: "ETB" | "USD";
@@ -48,7 +47,7 @@ export interface ChapaVerifyResponse {
       description?: string;
       logo?: string;
     };
-    meta: any;
+    meta: Record<string, unknown>;
     created_at: string;
     updated_at: string;
   };
@@ -75,7 +74,6 @@ export interface WalletBalance {
   total: number;
 }
 
-// Form schemas
 export const paymentInitSchema = z.object({
   amount: z
     .string()
@@ -84,7 +82,7 @@ export const paymentInitSchema = z.object({
       message: "Amount must be a positive number",
     }),
   currency: z.enum(["ETB", "USD"], {
-    errorMap: () => ({ message: "Please select a currency" }),
+    message: "Please select a currency",
   }),
   email: z
     .string()

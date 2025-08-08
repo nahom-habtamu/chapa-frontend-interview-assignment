@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
 import { useRouter } from "next/navigation";
-import { LoginForm } from "../../feature/auth/LoginForm";
+import React from "react";
 import { useAuth } from "../../data/auth/use-auth";
+import { LoginForm } from "../../feature/auth/LoginForm";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -11,7 +11,7 @@ export default function LoginPage() {
 
   React.useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      router.push("/dashboard");
+      router.push("/");
     }
   }, [isLoading, isAuthenticated, router]);
 
@@ -34,7 +34,7 @@ export default function LoginPage() {
           <h1 className="text-3xl font-bold text-blue-600 mb-8">Chapa Pay</h1>
         </div>
         <div className="bg-white shadow-md rounded-lg p-8">
-          <LoginForm onSuccess={() => router.push("/dashboard")} />
+          <LoginForm onSuccess={() => router.push("/")} />
         </div>
       </div>
     </div>

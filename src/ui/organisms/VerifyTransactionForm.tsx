@@ -1,14 +1,15 @@
+import { ChapaVerifyResponse } from "@/data/payment";
 import React from "react";
 import { useVerifyTransaction } from "../../data/payment/use-payment";
 import { Button } from "../atoms/Button";
-import { Icon } from "../atoms/Icons";
+import { Icon, IconName } from "../atoms/Icons";
 import { Input } from "../atoms/Input";
 import { Text } from "../atoms/Text";
 import { cn } from "../utils/cn";
 
 interface VerifyTransactionFormProps {
   className?: string;
-  onSuccess?: (data: any) => void;
+  onSuccess?: (data: ChapaVerifyResponse) => void;
 }
 
 export const VerifyTransactionForm: React.FC<VerifyTransactionFormProps> = ({
@@ -112,7 +113,7 @@ export const VerifyTransactionForm: React.FC<VerifyTransactionFormProps> = ({
           )}>
             <div className="flex items-center">
               <Icon 
-                name={getStatusIcon(data.data.status)} 
+                name={getStatusIcon(data.data.status) as IconName} 
                 size="sm" 
                 className="mr-2" 
               />
