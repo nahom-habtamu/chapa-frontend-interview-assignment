@@ -1,31 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React from "react";
-import { useAuth } from "../../data/auth/use-auth";
 import { LoginForm } from "../../feature/auth/LoginForm";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { isAuthenticated, isLoading } = useAuth();
-
-  React.useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      router.push("/");
-    }
-  }, [isLoading, isAuthenticated, router]);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  if (isAuthenticated) {
-    return null; // Will redirect to dashboard
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

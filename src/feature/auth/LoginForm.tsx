@@ -1,5 +1,6 @@
+import { useRouter } from "next/navigation";
 import React from "react";
-import { useLogin } from "../../data/auth/use-auth";
+import { useCurrentUser, useLogin } from "../../data/auth/use-auth";
 import { Button } from "../../ui/atoms/Button";
 import { Icon } from "../../ui/atoms/Icons";
 import { Input } from "../../ui/atoms/Input";
@@ -12,10 +13,21 @@ interface LoginFormProps {
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({  className }) => {
+
+  const { isAuthenticated } = useCurrentUser();
+
   const { form, handleLogin, isLoading, error } = useLogin();
 
   const { register, formState: { errors } } = form;
 
+  const router = useRouter();
+
+
+  React.useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      router.push("/");
+    }
+  }, [isLoading, isAuthenticated, router]);
 
   return (
     <div className={className}>
