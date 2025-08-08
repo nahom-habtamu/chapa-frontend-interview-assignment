@@ -8,9 +8,16 @@ const generateTxRef = (): string => {
   return `chapa_${timestamp}_${random}`;
 };
 
+const getOrigin = () => {
+  if (typeof window !== "undefined" && window.location?.origin) return window.location.origin;
+  return process.env.NEXT_PUBLIC_APP_URL;
+};
+
 export const initializePayment = async (data: PaymentInitializationData): Promise<ChapaInitializeResponse> => {
   try {
     const txRef = generateTxRef();
+
+    const origin = getOrigin();
 
     const chapaRequest: ChapaInitializeRequest = {
       amount: data.amount,
@@ -20,13 +27,13 @@ export const initializePayment = async (data: PaymentInitializationData): Promis
       last_name: data.customerLastName || "User",
       phone_number: data.customerPhone,
       tx_ref: txRef,
-      callback_url: data.callbackUrl || `${window.location.origin}/api/payments/callback`,
-      return_url: data.returnUrl || `${window.location.origin}/payment/success`,
+      callback_url: data.callbackUrl || `${origin}/api/payments/callback`,
+      return_url: data.returnUrl || `${origin}/payment/success`,
       description: data.description || "Payment transaction",
       customization: {
         title: "Chapa Payment",
         description: data.description || "Complete your payment",
-        logo: `${window.location.origin}/logo.png`,
+        logo: `${origin}/logo.png`,
       },
     };
 

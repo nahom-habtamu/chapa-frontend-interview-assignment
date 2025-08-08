@@ -1,0 +1,1 @@
+export const USE_MOCKS: boolean = (process.env.NEXT_PUBLIC_USE_MOCKS ?? "true").toLowerCase() === "true";
