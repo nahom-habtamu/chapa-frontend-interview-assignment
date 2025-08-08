@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import React from "react";
 import { WalletBalance } from "../../data/user/use-transactions/types";
 import { Button } from "../atoms/Button";
@@ -49,6 +50,12 @@ export const WalletCard: React.FC<WalletCardProps> = ({
     }).format(amount);
   };
 
+  const handleReload = () => {
+    if (typeof window !== "undefined" && window.location) {
+      window.location.reload();
+    }
+  };
+
   return (
     <div className={cn(
       "rounded-lg border border-gray-200 bg-white p-6 shadow-sm",
@@ -66,7 +73,7 @@ export const WalletCard: React.FC<WalletCardProps> = ({
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => window.location.reload()}
+          onClick={handleReload}
           className="text-gray-500 hover:text-gray-700"
         >
           <Icon name="refresh" size="sm" />

@@ -143,7 +143,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ className }) => 
                 <div key={bank.id} className="flex items-center p-3 bg-gray-50 rounded-lg">
                   <div className="h-8 w-8 rounded bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center">
                     <Text variant="caption" className="text-white font-bold">
-                      {bank.code.substring(0, 2)}
+                      {bank.name.substring(0, 2).toUpperCase()}
                     </Text>
                   </div>
                   <div className="ml-3 flex-1 min-w-0">
@@ -151,7 +151,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ className }) => 
                       {bank.name}
                     </Text>
                     <Text variant="caption" className="text-gray-500">
-                      {bank.code}
+                      {bank.slug.toUpperCase()}
                     </Text>
                   </div>
                 </div>

@@ -1,5 +1,5 @@
 import React from "react";
-import { ChapaVerifyResponse, useVerifyTransaction } from "../../data/user/use-verify-transaction";
+import { useVerifyTransaction } from "../../data/user/use-verify-transaction";
 import { Button } from "../atoms/Button";
 import { Icon, IconName } from "../atoms/Icons";
 import { Input } from "../atoms/Input";
@@ -8,7 +8,7 @@ import { cn } from "../utils/cn";
 
 interface VerifyTransactionFormProps {
   className?: string;
-  onSuccess?: (data: ChapaVerifyResponse) => void;
+  onSuccess?: (data: ReturnType<typeof useVerifyTransaction>["result"]) => void;
 }
 
 export const VerifyTransactionForm: React.FC<VerifyTransactionFormProps> = ({
