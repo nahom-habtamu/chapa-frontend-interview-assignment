@@ -5,10 +5,21 @@ import { ChapaVerifyResponse, TransactionVerificationData, VerificationResult } 
 export const verifyTransaction = async (txRef: string): Promise<ChapaVerifyResponse> => {
   try {
     const response = await chapaApiClient.get<ChapaVerifyResponse>(`/transaction/verify/${txRef}`);
-    return response.data;
+
+    // Check if the response indicates success
+    if (response.data?.status === "success" && response.data?.data) {
+      return response.data;
+    } else {
+      throw new Error("Transaction not found or invalid reference");
+    }
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.message || "Failed to verify transaction");
+      // Handle nested error messages
+      const errorMessage = error.response?.data?.message ||
+        error.response?.data?.error?.message ||
+        error.response?.data?.data?.message ||
+        "Failed to verify transaction";
+      throw new Error(errorMessage);
     }
     throw new Error("Network error occurred");
   }

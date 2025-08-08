@@ -62,18 +62,20 @@ export const TransferInitiationModal: React.FC<TransferInitiationModalProps> = (
           />
         </div>
         
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Currency
-          </label>
-          <select
-            {...register("currency")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-          >
-            <option value="ETB">ETB</option>
-            <option value="USD">USD</option>
-          </select>
-        </div>
+                  <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Currency
+            </label>
+            <Dropdown
+              options={[
+                { value: "ETB", label: "Ethiopian Birr (ETB)" },
+                { value: "USD", label: "US Dollar (USD)" },
+              ]}
+              value={watch("currency")}
+              onChange={(value) => setValue("currency", value as "ETB" | "USD")}
+              placeholder="Select currency"
+            />
+          </div>
         
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">

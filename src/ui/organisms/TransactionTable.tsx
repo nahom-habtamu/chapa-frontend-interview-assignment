@@ -45,7 +45,7 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
   showViewAllLink = false,
   viewAllHref = "/transactions",
 }) => {
-  const { verifyTransaction } = useVerifyTransaction();
+  const { verifyTransaction, error, isError } = useVerifyTransaction();
   const [localVerifyingRef, setLocalVerifyingRef] = React.useState<string | null>(null);
 
   const handleVerifyClick = (transaction: Transaction) => {
@@ -171,6 +171,14 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
                 {showActions && <TableHead className="text-right">Actions</TableHead>}
               </TableRow>
             </TableHeader>
+            {isError && (
+              <caption className="caption-top p-2 text-left">
+                <div className="rounded bg-red-50 border border-red-200 inline-flex items-center px-2 py-1">
+                  <Icon name="alertCircle" size="sm" className="text-red-500 mr-1" />
+                  <span className="text-xs text-red-700">{error}</span>
+                </div>
+              </caption>
+            )}
           <TableBody>
             {transactions.map((transaction) => (
               <TableRow key={transaction.id} className="hover:bg-gray-50/50 transition-colors">

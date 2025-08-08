@@ -1,36 +1,97 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Chapa Frontend Interview Assignment
 
-## Getting Started
+A full-featured demo app showcasing payments and transfers using Chapa APIs with a clean, scalable frontend architecture.
 
-First, run the development server:
+### Tech Stack
+- Next.js (App Router)
+- TypeScript
+- React Hook Form + Zod (forms + validation)
+- TanStack Query (server state)
+- Tailwind CSS (UI)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Environment Setup
+Create a `.env` file in project root:
+
+```
+INTERNAL_CHAPA_PROXY_URL=chapaurl
+CHAPA_SECRET_KEY=testsecretkey
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- `CHAPA_SECRET_KEY`: toggles mocked data in some areas
+- `INTERNAL_CHAPA_PROXY_URL`: server-side proxy base for Chapa requests
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Install dependencies and run:
+```
+npm install
+npm run dev
+```
+Visit `http://localhost:3000`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Project Structure
 
-## Learn More
+```
+src/
+  data/        # Data layer: API clients, hooks, schemas, types, localStorage
+  feature/     # Feature layer: page-level logic and compositions
+  ui/          # UI layer: atoms, molecules, organisms (pure presentational)
+```
 
-To learn more about Next.js, take a look at the following resources:
+- `data/`
+  - `common/`: API client, config
+  - `auth/`: login/current-user hooks
+  - `user/`: payment initialize/verify, transactions
+  - `admin/`: banks, transfers (initiate/verify), admins
+- `feature/`
+  - `auth/`, `user/`, `admin/`: screen containers
+- `ui/`
+  - `atoms/`, `molecules/`, `organisms/`: reusable presentational components
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Mocked vs Integrated APIs
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Mocked/Simulated (in dev):
+- Admin list, Users list, Transactions list (localStorage-backed)
+- Some initial dataset seeds via `mock-data`
 
-## Deploy on Vercel
+Integrated via Chapa proxy:
+- getBanks: GET `/v1/banks`
+- initiateTransaction: POST `/v1/transaction/initialize`
+- verifyTransaction: GET `/v1/transaction/verify/{txRef}`
+- initiateTransfer: POST `/v1/transfers`
+- verifyTransfer: GET `/v1/transfers/verify/{reference}`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Proxy location: `src/app/api/chapa/[...slug]/route.ts`
+Client: `src/data/common/chapa-api-client.ts`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Where to Test in the UI
+
+Login credentials (mocked):
+- Super Admin: `superadmin@chapa.co` / `super123`
+- Admin: `admin@chapa.co` / `admin123`
+
+1) Banks (getBanks)
+- Login as Super Admin or Admin
+- Navigate: Admin > Banks
+- See list fetched via Chapa
+
+2) Payments
+- Navigate: User > Dashboard
+- Initialize Payment: fill the form and submit
+- Verify Payment: User > Transactions → click Verify on a row
+
+3) Transfers (initiateTransfer, verifyTransfer)
+- Login as Super Admin (`superadmin@chapa.co` / `super123`)
+- Navigate: Admin > Transfers
+- Click “Initiate Transfer”
+  - Amount: e.g. 1
+  - Currency: ETB or USD
+  - Recipient: e.g. Abebe
+  - Account Number: e.g. 1000472713888
+  - Bank: select from dropdown (names shown, IDs submitted)
+  - Reason: optional (e.g. Test)
+- Submit → a reference is displayed; the row gets added and persisted (localStorage)
+- Click "Verify" on a row to check transfer status
+
+### Notes
+- Transfers and Transactions are persisted in localStorage for demo purposes.
+- Error handling surfaces nested API error messages when available.

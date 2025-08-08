@@ -58,14 +58,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ className }) => 
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Button 
                     variant="outline" 
-                    className="flex items-center space-x-2 border-white/30 text-white hover:bg-white/10"
+                    className="flex items-center space-x-2 border-white/30 text-white bg-white/10 hover:bg-white/20"
                     onClick={() => router.push("/admin/manage-admins")}
                   >
                     <Icon name="shield" size="sm" />
                     <span>Manage Admins</span>
                   </Button>
                   <Button 
-                    className="flex items-center space-x-2 bg-white text-purple-700 hover:bg-white/90"
+                    variant="outline"
+                    className="flex items-center space-x-2 bg-white text-purple-700 border-white/30 hover:bg-white/90"
                     onClick={() => router.push("/admin/transfers")}
                   >
                     <Icon name="arrowUpRight" size="sm" />
@@ -84,6 +85,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ className }) => 
               <Text variant="body" className="text-gray-600 mt-2">
                 Monitor users, payments, and system health
               </Text>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button 
+                variant="outline" 
+                className="flex items-center space-x-2"
+                onClick={() => router.push("/admin/manage-admins")}
+              >
+                <Icon name="shield" size="sm" />
+                <span>Manage Admins</span>
+              </Button>
+              <Button 
+                variant="default"
+                className="flex items-center space-x-2"
+                onClick={() => router.push("/admin/transfers")}
+              >
+                <Icon name="arrowUpRight" size="sm" />
+                <span>Transfer Center</span>
+              </Button>
             </div>
           </div>
         )}
