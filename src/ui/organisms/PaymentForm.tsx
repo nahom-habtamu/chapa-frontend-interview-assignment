@@ -1,5 +1,5 @@
 import React from "react";
-import { useInitializePayment } from "../../data/payment/use-payment";
+import { useInitializePayment } from "../../data/user/useInitializePayments";
 import { Button } from "../atoms/Button";
 
 import { Dropdown } from "../atoms/Dropdown";
@@ -63,14 +63,14 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             label="First Name"
-            {...register("first_name")}
-            error={errors.first_name?.message}
+            {...register("customerFirstName")}
+            error={errors.customerFirstName?.message}
             placeholder="Enter first name"
           />
           <Input
             label="Last Name"
-            {...register("last_name")}
-            error={errors.last_name?.message}
+            {...register("customerLastName")}
+            error={errors.customerLastName?.message}
             placeholder="Enter last name"
           />
         </div>
@@ -78,15 +78,15 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
         <Input
           label="Email"
           type="email"
-          {...register("email")}
-          error={errors.email?.message}
+          {...register("customerEmail")}
+          error={errors.customerEmail?.message}
           placeholder="Enter email address"
         />
 
         <Input
           label="Phone Number (Optional)"
-          {...register("phone_number")}
-          error={errors.phone_number?.message}
+          {...register("customerPhone")}
+          error={errors.customerPhone?.message}
           placeholder="Enter phone number"
         />
 

@@ -1,6 +1,5 @@
-import { ChapaVerifyResponse } from "@/data/payment";
 import React from "react";
-import { useVerifyTransaction } from "../../data/payment/use-payment";
+import { ChapaVerifyResponse, useVerifyTransaction } from "../../data/user/useVerifyTransaction";
 import { Button } from "../atoms/Button";
 import { Icon, IconName } from "../atoms/Icons";
 import { Input } from "../atoms/Input";
@@ -22,7 +21,7 @@ export const VerifyTransactionForm: React.FC<VerifyTransactionFormProps> = ({
     isLoading,
     error,
     isSuccess,
-    data,
+    result,
   } = useVerifyTransaction();
 
   const {
@@ -31,10 +30,37 @@ export const VerifyTransactionForm: React.FC<VerifyTransactionFormProps> = ({
   } = form;
 
   React.useEffect(() => {
-    if (isSuccess && data) {
-      onSuccess?.(data);
+    if (isSuccess && result?.isValid && result.transaction) {
+      // Create a mock ChapaVerifyResponse for onSuccess callback
+      const mockResponse: ChapaVerifyResponse = {
+        message: "Transaction verified successfully",
+        status: "success",
+        data: {
+          first_name: result.transaction.customerName.split(' ')[0] || "",
+          last_name: result.transaction.customerName.split(' ')[1] || "",
+          email: result.transaction.customerEmail,
+          currency: result.transaction.currency,
+          amount: result.transaction.amount,
+          charge: 0,
+          mode: "test",
+          method: "bank_transfer",
+          type: "payment",
+          status: result.transaction.status,
+          reference: result.transaction.reference,
+          tx_ref: result.transaction.id,
+          customization: {
+            title: "Payment",
+            description: "Transaction verified",
+            logo: "",
+          },
+          meta: {},
+          created_at: result.transaction.createdAt,
+          updated_at: result.transaction.updatedAt,
+        },
+      };
+      onSuccess?.(mockResponse);
     }
-  }, [isSuccess, data, onSuccess]);
+  }, [isSuccess, result, onSuccess]);
 
   const getStatusColor = (status: string) => {
     const colors = {
@@ -71,8 +97,8 @@ export const VerifyTransactionForm: React.FC<VerifyTransactionFormProps> = ({
       <form onSubmit={handleVerifyTransaction} className="space-y-4">
         <Input
           label="Transaction Reference"
-          {...register("tx_ref")}
-          error={errors.tx_ref?.message}
+          {...register("txRef")}
+          error={errors.txRef?.message}
           placeholder="Enter transaction reference (tx_ref)"
           helperText="This is the reference you received when initializing the payment"
         />
@@ -99,80 +125,93 @@ export const VerifyTransactionForm: React.FC<VerifyTransactionFormProps> = ({
         </Button>
       </form>
 
-      {isSuccess && data && (
+      {isSuccess && result && (
         <div className="mt-6 space-y-4">
           <div className="border-t border-gray-200 pt-4">
             <Text variant="h6" className="mb-4">
-              Transaction Details
+              Verification Result
             </Text>
           </div>
 
-          <div className={cn(
-            "rounded-md border p-4",
-            getStatusColor(data.data.status)
-          )}>
-            <div className="flex items-center">
-              <Icon 
-                name={getStatusIcon(data.data.status) as IconName} 
-                size="sm" 
-                className="mr-2" 
-              />
-              <Text variant="body" className="font-medium">
-                Status: {data.data.status.charAt(0).toUpperCase() + data.data.status.slice(1)}
-              </Text>
-            </div>
-          </div>
+          {result.isValid && result.transaction ? (
+            <>
+              <div className={cn(
+                "rounded-md border p-4",
+                getStatusColor(result.transaction.status)
+              )}>
+                <div className="flex items-center">
+                  <Icon 
+                    name={getStatusIcon(result.transaction.status) as IconName} 
+                    size="sm" 
+                    className="mr-2" 
+                  />
+                  <Text variant="body" className="font-medium">
+                    Status: {result.transaction.status.charAt(0).toUpperCase() + result.transaction.status.slice(1)}
+                  </Text>
+                </div>
+              </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Text variant="caption" className="text-gray-500">
-                Amount
-              </Text>
-              <Text variant="body" className="font-medium">
-                {data.data.currency} {data.data.amount}
-              </Text>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Text variant="caption" className="text-gray-500">
+                    Amount
+                  </Text>
+                  <Text variant="body" className="font-medium">
+                    {result.transaction.currency} {result.transaction.amount}
+                  </Text>
+                </div>
+                <div className="space-y-2">
+                  <Text variant="caption" className="text-gray-500">
+                    Reference
+                  </Text>
+                  <Text variant="body" className="font-medium">
+                    {result.transaction.reference}
+                  </Text>
+                </div>
+                <div className="space-y-2">
+                  <Text variant="caption" className="text-gray-500">
+                    Customer
+                  </Text>
+                  <Text variant="body" className="font-medium">
+                    {result.transaction.customerName}
+                  </Text>
+                </div>
+                <div className="space-y-2">
+                  <Text variant="caption" className="text-gray-500">
+                    Email
+                  </Text>
+                  <Text variant="body" className="font-medium">
+                    {result.transaction.customerEmail}
+                  </Text>
+                </div>
+                <div className="space-y-2">
+                  <Text variant="caption" className="text-gray-500">
+                    Created At
+                  </Text>
+                  <Text variant="body" className="font-medium">
+                    {new Date(result.transaction.createdAt).toLocaleDateString()}
+                  </Text>
+                </div>
+                <div className="space-y-2">
+                  <Text variant="caption" className="text-gray-500">
+                    Transaction ID
+                  </Text>
+                  <Text variant="body" className="font-medium">
+                    {result.transaction.id}
+                  </Text>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="rounded-md bg-red-50 border border-red-200 p-4">
+              <div className="flex">
+                <Icon name="alertCircle" size="sm" className="text-red-400 mr-3 mt-0.5" />
+                <Text variant="caption" className="text-red-800">
+                  {result.error || "Transaction verification failed"}
+                </Text>
+              </div>
             </div>
-            <div className="space-y-2">
-              <Text variant="caption" className="text-gray-500">
-                Reference
-              </Text>
-              <Text variant="body" className="font-medium">
-                {data.data.reference}
-              </Text>
-            </div>
-            <div className="space-y-2">
-              <Text variant="caption" className="text-gray-500">
-                Customer
-              </Text>
-              <Text variant="body" className="font-medium">
-                {data.data.first_name} {data.data.last_name}
-              </Text>
-            </div>
-            <div className="space-y-2">
-              <Text variant="caption" className="text-gray-500">
-                Payment Method
-              </Text>
-              <Text variant="body" className="font-medium">
-                {data.data.method || "N/A"}
-              </Text>
-            </div>
-            <div className="space-y-2">
-              <Text variant="caption" className="text-gray-500">
-                Created At
-              </Text>
-              <Text variant="body" className="font-medium">
-                {new Date(data.data.created_at).toLocaleDateString()}
-              </Text>
-            </div>
-            <div className="space-y-2">
-              <Text variant="caption" className="text-gray-500">
-                Mode
-              </Text>
-              <Text variant="body" className="font-medium">
-                {data.data.mode}
-              </Text>
-            </div>
-          </div>
+          )}
         </div>
       )}
     </div>

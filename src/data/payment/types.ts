@@ -58,11 +58,11 @@ export interface Transaction {
   id: string;
   amount: number;
   currency: string;
-  status: "pending" | "success" | "failed" | "cancelled";
-  type: "payment" | "payout" | "refund";
+  status: "pending" | "success" | "failed" | "cancelled" | "processing";
+  type: "payment" | "payout" | "refund" | "transfer";
   description: string;
   reference: string;
-  recipient?: string;
+  recipient: string;
   created_at: string;
   updated_at: string;
 }

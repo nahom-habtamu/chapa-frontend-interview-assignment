@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { Transaction } from "../../data/payment/types";
-import { useRecentTransactions, useWalletBalance } from "../../data/transaction/use-transactions";
+import { Transaction, useTransactions, useWalletBalance } from "../../data/user/useTransactions";
 import { Icon } from "../../ui/atoms/Icons";
 import { Text } from "../../ui/atoms/Text";
 import { PaymentForm } from "../../ui/organisms/PaymentForm";
@@ -20,8 +19,11 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ className }) => {
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { data: walletBalance, isLoading: isLoadingBalance } = useWalletBalance();
-  const { data: recentTransactions, isLoading: isLoadingTransactions } = useRecentTransactions(5);
+  const { balance: walletBalance, loading: isLoadingBalance } = useWalletBalance();
+  const { transactions: allTransactions, loading: isLoadingTransactions } = useTransactions({ limit: 5 });
+  
+  // Take only first 5 transactions for recent view
+  const recentTransactions = allTransactions?.slice(0, 5) || [];
 
   const handleViewTransaction = (transaction: Transaction) => {
     setSelectedTransaction(transaction);

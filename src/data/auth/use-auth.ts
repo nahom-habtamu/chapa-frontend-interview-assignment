@@ -66,7 +66,6 @@ export const useCurrentUser = () => {
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    // Only access localStorage after hydration
     setToken(getStoredToken());
     setIsHydrated(true);
   }, []);

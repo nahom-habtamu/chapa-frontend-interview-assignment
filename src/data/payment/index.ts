@@ -1,5 +1,5 @@
-export * from "./chapa-api";
+export { useInitializePayment } from "../user/useInitializePayments";
+export { useVerifyTransaction } from "../user/useVerifyTransaction";
+
 export * from "./types";
-export * from "./use-banks";
-export * from "./use-payment";
 

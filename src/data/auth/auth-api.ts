@@ -1,40 +1,53 @@
+import axios from "axios";
+import { apiClient } from "../common/api-client";
+import { mockUsers } from "../common/mock-data";
 import { AuthResponse, LoginCredentials, User } from "./types";
 
-const mockUsers: User[] = [
-  {
-    id: "1",
-    email: "user@example.com",
-    name: "John Doe",
-    role: "user",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "2",
-    email: "admin@example.com",
-    name: "Jane Smith",
-    role: "admin",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "3",
-    email: "superadmin@example.com",
-    name: "Super Admin",
-    role: "super_admin",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
+// Use mock users from common, but filter for active login users
+const mockLoginUsers = mockUsers.filter(user =>
+  !user.isDeactivated && user.isActive
+).map(user => ({
+  ...user,
+  // Add default test passwords for mock login
+  password: user.role === "super_admin" ? "super123" :
+    user.role === "admin" ? "admin123" : "user123"
+}));
 
+
+export const getCurrentUserFromAPI = async (token: string): Promise<User> => {
+  try {
+    const response = await apiClient.get<User>("/auth/me", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "Failed to get current user");
+    }
+    throw new Error("Network error occurred");
+  }
+};
 
 export const getCurrentUser = async (token: string): Promise<User> => {
-  await delay(500);
-  const user = decodeToken(token);
-  if (!user) {
-    throw new Error("Invalid token");
+  try {
+    // Try real API first
+    return await getCurrentUserFromAPI(token);
+  } catch (error) {
+    // Fallback to mock for development
+    console.warn("API failed, using mock user:", error);
+    await delay(500);
+    const user = decodeToken(token);
+    if (!user) {
+      throw new Error("Invalid token");
+    }
+
+    // Check if user is deactivated
+    if (user.isDeactivated) {
+      throw new Error("User account has been deactivated");
+    }
+
+    return user;
   }
-  return user;
 };
 
 
@@ -64,46 +77,82 @@ export const decodeToken = (token: string): User | null => {
       return null;
     }
 
+    const mockUser = mockUsers.find(u => u.id === payload.sub);
+    if (!mockUser) return null;
+
     return {
       id: payload.sub,
       email: payload.email,
-      name: mockUsers.find(u => u.id === payload.sub)?.name || "",
+      name: mockUser.name,
       role: payload.role,
-      createdAt: mockUsers.find(u => u.id === payload.sub)?.createdAt || "",
-      updatedAt: mockUsers.find(u => u.id === payload.sub)?.updatedAt || "",
+      isActive: mockUser.isActive,
+      isDeactivated: mockUser.isDeactivated,
+      createdAt: mockUser.createdAt,
+      updatedAt: mockUser.updatedAt,
     };
   } catch {
     return null;
   }
 };
 
+// Real API call for login
+export const loginUserAPI = async (credentials: LoginCredentials): Promise<AuthResponse> => {
+  try {
+    const response = await apiClient.post<AuthResponse>("/auth/login", credentials);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "Login failed");
+    }
+    throw new Error("Network error occurred");
+  }
+};
+
 export const loginUser = async (credentials: LoginCredentials): Promise<AuthResponse> => {
-  await delay(1000);
-  const user = mockUsers.find(u => u.email === credentials.email);
+  try {
+    // Try real API first
+    return await loginUserAPI(credentials);
+  } catch (error) {
+    // Fallback to mock for development
+    console.warn("API failed, using mock login:", error);
 
-  if (!user) {
-    throw new Error("Invalid email or password");
+    await delay(1000);
+    const user = mockLoginUsers.find(u => u.email === credentials.email);
+
+    if (!user) {
+      throw new Error("Invalid email or password");
+    }
+
+    // Check if user is deactivated
+    if (user.isDeactivated) {
+      throw new Error("Account has been deactivated. Please contact support.");
+    }
+
+    if (!user.isActive) {
+      throw new Error("Account is not active. Please contact support.");
+    }
+
+    const validPasswords: Record<string, string> = {
+      "john.doe@example.com": "user123",
+      "jane.smith@example.com": "user123",
+      "admin@chapa.co": "admin123",
+      "superadmin@chapa.co": "super123",
+    };
+
+    if (validPasswords[credentials.email] !== credentials.password) {
+      throw new Error("Invalid email or password");
+    }
+
+    const token = generateToken(user);
+
+    return {
+      user,
+      token: {
+        access_token: token,
+        expires_in: 86400, // 24 hours
+        token_type: "Bearer",
+      },
+    };
   }
-
-  const validPasswords: Record<string, string> = {
-    "user@example.com": "user123",
-    "admin@example.com": "admin123",
-    "superadmin@example.com": "super123",
-  };
-
-  if (validPasswords[credentials.email] !== credentials.password) {
-    throw new Error("Invalid email or password");
-  }
-
-  const token = generateToken(user);
-
-  return {
-    user,
-    token: {
-      access_token: token,
-      expires_in: 86400, // 24 hours
-      token_type: "Bearer",
-    },
-  };
 };
 

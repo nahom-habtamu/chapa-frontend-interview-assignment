@@ -1,18 +1,7 @@
-export type UserRole = "user" | "admin";
+export {
+  type AdminUser,
+  type User as RegularUser,
+  type BaseUser as User,
+  type UserRole
+} from "../data/common/types";
 
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: UserRole;
-  isActive: boolean;
-  createdAt: string;
-}
-
-export interface AdminUser extends User {
-  role: "admin";
-}
-
-export interface RegularUser extends User {
-  role: "user";
-}
