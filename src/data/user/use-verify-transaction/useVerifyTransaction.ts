@@ -1,6 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
+import { updateTransactionStatusByReference } from "../use-transactions/api";
+import { TransactionStatus } from "../use-transactions/types";
 import {
   verifyAndValidateTransaction,
   verifyTransaction
@@ -12,6 +14,18 @@ import {
   type VerifyTransactionData
 } from "./schema";
 import { TransactionVerificationData } from "./types";
+
+// Map Chapa API status to our TransactionStatus
+const mapChapaStatusToTransactionStatus = (chapaStatus: string): TransactionStatus => {
+  const status = chapaStatus.toLowerCase();
+
+  if (status.includes('success')) return 'success';
+  if (status.includes('failed') || status.includes('cancelled')) return 'failed';
+  if (status.includes('pending')) return 'pending';
+  if (status.includes('processing')) return 'processing';
+
+  return 'pending';
+};
 
 export const useVerifyTransaction = () => {
   const queryClient = useQueryClient();
@@ -29,8 +43,10 @@ export const useVerifyTransaction = () => {
     mutationFn: async (data: TransactionVerificationData) => {
       return await verifyAndValidateTransaction(data);
     },
-    onSuccess: (result) => {
-      if (result.isValid) {
+    onSuccess: async (result, variables) => {
+      if (result.isValid && result.transaction) {
+        const mappedStatus = mapChapaStatusToTransactionStatus(result.transaction.status);
+        await updateTransactionStatusByReference(variables.txRef, mappedStatus);
         queryClient.invalidateQueries({ queryKey: ["transactions"] });
         queryClient.invalidateQueries({ queryKey: ["wallet"] });
       }
@@ -70,8 +86,10 @@ export const useQuickVerify = () => {
       const response = await verifyTransaction(data.txRef);
       return response;
     },
-    onSuccess: (response) => {
-      if (response.status === "success") {
+    onSuccess: async (response, variables) => {
+      if (response.data && response.data.status) {
+        const mappedStatus = mapChapaStatusToTransactionStatus(response.data.status);
+        await updateTransactionStatusByReference(variables.txRef, mappedStatus);
         queryClient.invalidateQueries({ queryKey: ["transactions"] });
         queryClient.invalidateQueries({ queryKey: ["wallet"] });
       }

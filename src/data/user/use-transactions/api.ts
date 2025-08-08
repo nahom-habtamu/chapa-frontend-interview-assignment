@@ -1,4 +1,4 @@
-import { Transaction, WalletBalance } from "./types";
+import { Transaction, WalletBalance, type TransactionStatus } from "./types";
 
 const STORAGE_KEY = "chapa_transactions";
 
@@ -109,4 +109,25 @@ export const appendTransaction = async (params: AppendTransactionParams): Promis
   const updated = [newTx, ...all];
   writeTransactionsToStorage(updated);
   return newTx;
+};
+
+export const updateTransactionStatusByReference = async (
+  reference: string,
+  status: TransactionStatus
+): Promise<Transaction | null> => {
+  await ensureSeeded();
+  const all = readTransactionsFromStorage();
+  const idx = all.findIndex((t) => t.reference === reference);
+  if (idx === -1) {
+    return null;
+  }
+
+  const updated: Transaction = {
+    ...all[idx],
+    status,
+    updated_at: new Date().toISOString(),
+  };
+  all[idx] = updated;
+  writeTransactionsToStorage(all);
+  return updated;
 };

@@ -1,6 +1,7 @@
 import React from "react";
 import { useCurrentUser } from "../../../data/auth/use-auth";
 import { Transaction, useTransactions } from "../../../data/user/use-transactions";
+import { useVerifyTransaction } from "../../../data/user/use-verify-transaction/useVerifyTransaction";
 import { Button } from "../../../ui/atoms/Button";
 import { Icon } from "../../../ui/atoms/Icons";
 import { Text } from "../../../ui/atoms/Text";
@@ -14,8 +15,10 @@ interface UserTransactionsProps {
 export const UserTransactions: React.FC<UserTransactionsProps> = ({ className }) => {
   const { user } = useCurrentUser();
   const { transactions, loading: transactionsLoading } = useTransactions(user?.id);
+  const { verifyTransaction, isLoading: isVerifying } = useVerifyTransaction();
   const [selectedTransaction, setSelectedTransaction] = React.useState<Transaction | null>(null);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [verifyingRef, setVerifyingRef] = React.useState<string | null>(null);
 
   const handleViewTransaction = (transaction: Transaction) => {
     setSelectedTransaction(transaction);
@@ -25,6 +28,20 @@ export const UserTransactions: React.FC<UserTransactionsProps> = ({ className })
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedTransaction(null);
+  };
+
+  const handleVerify = (transaction: Transaction) => {
+    if (transaction.reference) {
+      setVerifyingRef(transaction.reference);
+      verifyTransaction(
+        { txRef: transaction.reference },
+        {
+          onSettled: () => {
+            setVerifyingRef(null);
+          },
+        }
+      );
+    }
   };
 
   return (
@@ -54,6 +71,9 @@ export const UserTransactions: React.FC<UserTransactionsProps> = ({ className })
         title="All Transactions"
         subtitle={`Showing ${transactions.length} transaction${transactions.length !== 1 ? 's' : ''}`}
         onViewTransaction={handleViewTransaction}
+        onVerifyTransaction={handleVerify}
+        isVerifying={isVerifying}
+        verifyingReference={verifyingRef}
       />
 
       {/* Transaction Modal */}

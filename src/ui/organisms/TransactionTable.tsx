@@ -1,5 +1,6 @@
 import React from "react";
 import { Transaction } from "../../data/user/use-transactions/types";
+import { useVerifyTransaction } from "../../data/user/use-verify-transaction/useVerifyTransaction";
 import { Badge } from "../atoms/Badge";
 import { Button } from "../atoms/Button";
 import { Icon, type IconName } from "../atoms/Icons";
@@ -20,6 +21,9 @@ interface TransactionTableProps {
   isLoading?: boolean;
   showActions?: boolean;
   onViewTransaction?: (transaction: Transaction) => void;
+  onVerifyTransaction?: (transaction: Transaction) => void;
+  isVerifying?: boolean;
+  verifyingReference?: string | null;
   className?: string;
   title?: string;
   subtitle?: string;
@@ -32,13 +36,31 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
   isLoading,
   showActions = true,
   onViewTransaction,
+  onVerifyTransaction,
+  isVerifying = false,
+  verifyingReference = null,
   className,
   title = "Recent Transactions",
   subtitle = "Track all your payment activities",
   showViewAllLink = false,
   viewAllHref = "/transactions",
 }) => {
+  const { verifyTransaction } = useVerifyTransaction();
+  const [localVerifyingRef, setLocalVerifyingRef] = React.useState<string | null>(null);
 
+  const handleVerifyClick = (transaction: Transaction) => {
+    if (transaction.reference) {
+      setLocalVerifyingRef(transaction.reference);
+      verifyTransaction(
+        { txRef: transaction.reference },
+        {
+          onSettled: () => {
+            setLocalVerifyingRef(null);
+          },
+        }
+      );
+    }
+  };
 
   const getTypeIcon = (type: Transaction["type"]): IconName => {
     const icons = {
@@ -202,15 +224,31 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
                 </TableCell>
                 {showActions && (
                   <TableCell className="py-4 text-right">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => onViewTransaction?.(transaction)}
-                      className="hover:bg-gray-100"
-                    >
-                      <Icon name="eye" size="sm" className="mr-1" />
-                      <span className="hidden sm:inline">View</span>
-                    </Button>
+                    <div className="flex items-center justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onViewTransaction?.(transaction)}
+                        className="hover:bg-gray-100"
+                      >
+                        <Icon name="eye" size="sm" className="mr-1" />
+                        <span className="hidden sm:inline">View</span>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleVerifyClick(transaction)}
+                        disabled={localVerifyingRef === transaction.reference}
+                        className="hover:bg-gray-100"
+                      >
+                        {localVerifyingRef === transaction.reference && (
+                          <Icon name="refresh" size="sm" className="mr-1 animate-spin" />
+                        )}
+                        <span className="hidden sm:inline">
+                          {localVerifyingRef === transaction.reference ? "Verifying..." : "Verify"}
+                        </span>
+                      </Button>
+                    </div>
                   </TableCell>
                 )}
               </TableRow>
