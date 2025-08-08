@@ -19,14 +19,38 @@ export const useUsers = () => {
 
   const toggleStatusMutation = useMutation({
     mutationFn: toggleUserStatus,
-    onSuccess: (updatedUser) => {
-      queryClient.setQueryData(["users"], (oldData: BaseUser[]) => {
-        if (!oldData) return oldData;
-        return oldData.map((user: BaseUser) =>
-          user.id === updatedUser.id ? updatedUser : user
+    onMutate: async (userId: string) => {
+      await queryClient.cancelQueries({ queryKey: ["users"] });
+      const previousUsers = queryClient.getQueryData<BaseUser[]>(["users"]);
+
+      if (previousUsers) {
+        const nextUsers = previousUsers.map((user) =>
+          user.id === userId
+            ? {
+              ...user,
+              isActive: !user.isActive,
+              isDeactivated: user.isActive,
+              updatedAt: new Date().toISOString(),
+            }
+            : user
         );
+        queryClient.setQueryData(["users"], nextUsers);
+      }
+
+      return { previousUsers } as { previousUsers?: BaseUser[] };
+    },
+    onError: (_err, _variables, context) => {
+      if (context?.previousUsers) {
+        queryClient.setQueryData(["users"], context.previousUsers);
+      }
+    },
+    onSuccess: (updatedUser) => {
+      queryClient.setQueryData(["users"], (oldData: BaseUser[] | undefined) => {
+        if (!oldData) return oldData;
+        return oldData.map((user) => (user.id === updatedUser.id ? updatedUser : user));
       });
     },
+    // Do NOT invalidate here; refetch would reset to mock baseline and undo optimistic update
   });
 
   const deactivateMutation = useMutation({
