@@ -1,0 +1,148 @@
+import { Transaction, WalletBalance } from "../payment/types";
+
+// Mock transaction data
+export const mockTransactions: Transaction[] = [
+  {
+    id: "1",
+    amount: 150.00,
+    currency: "ETB",
+    status: "success",
+    type: "payment",
+    description: "Online purchase - Electronics",
+    reference: "TXN-2024-001",
+    recipient: "Tech Store Ltd",
+    created_at: "2024-01-15T10:30:00Z",
+    updated_at: "2024-01-15T10:35:00Z",
+  },
+  {
+    id: "2",
+    amount: 75.50,
+    currency: "ETB",
+    status: "pending",
+    type: "payout",
+    description: "Refund processing",
+    reference: "TXN-2024-002",
+    recipient: "John Doe",
+    created_at: "2024-01-14T14:20:00Z",
+    updated_at: "2024-01-14T14:20:00Z",
+  },
+  {
+    id: "3",
+    amount: 200.00,
+    currency: "USD",
+    status: "success",
+    type: "payment",
+    description: "Service subscription",
+    reference: "TXN-2024-003",
+    recipient: "Service Provider Inc",
+    created_at: "2024-01-13T09:15:00Z",
+    updated_at: "2024-01-13T09:18:00Z",
+  },
+  {
+    id: "4",
+    amount: 25.00,
+    currency: "ETB",
+    status: "failed",
+    type: "payment",
+    description: "Failed transaction - insufficient funds",
+    reference: "TXN-2024-004",
+    recipient: "Grocery Store",
+    created_at: "2024-01-12T16:45:00Z",
+    updated_at: "2024-01-12T16:47:00Z",
+  },
+  {
+    id: "5",
+    amount: 300.00,
+    currency: "ETB",
+    status: "success",
+    type: "payment",
+    description: "Mobile top-up",
+    reference: "TXN-2024-005",
+    recipient: "Telecom Company",
+    created_at: "2024-01-11T11:20:00Z",
+    updated_at: "2024-01-11T11:22:00Z",
+  },
+  {
+    id: "6",
+    amount: 50.00,
+    currency: "USD",
+    status: "cancelled",
+    type: "payment",
+    description: "Cancelled by user",
+    reference: "TXN-2024-006",
+    recipient: "Online Store",
+    created_at: "2024-01-10T08:30:00Z",
+    updated_at: "2024-01-10T08:35:00Z",
+  },
+  {
+    id: "7",
+    amount: 320.75,
+    currency: "ETB",
+    status: "success",
+    type: "payment",
+    description: "Restaurant payment",
+    reference: "TXN-2024-007",
+    recipient: "Blue Nile Restaurant",
+    created_at: "2024-01-09T19:45:00Z",
+    updated_at: "2024-01-09T19:47:00Z",
+  },
+  {
+    id: "8",
+    amount: 85.25,
+    currency: "ETB",
+    status: "success",
+    type: "payout",
+    description: "Cashback reward",
+    reference: "TXN-2024-008",
+    recipient: "Reward Points",
+    created_at: "2024-01-08T12:15:00Z",
+    updated_at: "2024-01-08T12:16:00Z",
+  },
+  {
+    id: "9",
+    amount: 1200.00,
+    currency: "ETB",
+    status: "pending",
+    type: "payment",
+    description: "Monthly rent payment",
+    reference: "TXN-2024-009",
+    recipient: "Property Management Co.",
+    created_at: "2024-01-07T10:00:00Z",
+    updated_at: "2024-01-07T10:00:00Z",
+  },
+  {
+    id: "10",
+    amount: 45.50,
+    currency: "ETB",
+    status: "failed",
+    type: "payment",
+    description: "Transport payment failed",
+    reference: "TXN-2024-010",
+    recipient: "Bus Company",
+    created_at: "2024-01-06T07:30:00Z",
+    updated_at: "2024-01-06T07:31:00Z",
+  },
+];
+
+// Mock wallet balance
+export const mockWalletBalance: WalletBalance = {
+  currency: "ETB",
+  available: 1250.75,
+  pending: 75.50,
+  total: 1326.25,
+};
+
+// Mock transaction statistics
+export const mockTransactionStats = {
+  totalTransactions: mockTransactions.length,
+  successfulTransactions: mockTransactions.filter(t => t.status === "success").length,
+  pendingTransactions: mockTransactions.filter(t => t.status === "pending").length,
+  failedTransactions: mockTransactions.filter(t => t.status === "failed").length,
+  totalVolume: mockTransactions
+    .filter(t => t.status === "success")
+    .reduce((sum, t) => sum + t.amount, 0),
+  averageTransaction: mockTransactions
+    .filter(t => t.status === "success")
+    .reduce((sum, t) => sum + t.amount, 0) /
+    mockTransactions.filter(t => t.status === "success").length,
+};
