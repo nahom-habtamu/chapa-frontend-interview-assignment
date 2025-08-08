@@ -1,5 +1,5 @@
 import React from "react";
-import { useInitializePayment } from "../../data/user/useInitializePayments";
+import { useInitializePayment } from "../../data/user/use-initialize-payments";
 import { Button } from "../atoms/Button";
 
 import { Dropdown } from "../atoms/Dropdown";

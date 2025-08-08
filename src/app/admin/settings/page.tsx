@@ -1,6 +1,6 @@
 "use client";
 
-import { Settings } from "../../../feature/settings";
+import { Settings } from "../../../feature/shared/settings";
 
 export default function AdminSettings() {
   return (

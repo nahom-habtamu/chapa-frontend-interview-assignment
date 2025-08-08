@@ -1,10 +1,7 @@
-export * from "./useAdmins";
-export * from "./useBanks";
-export * from "./useUsers";
-
-// Legacy exports for backward compatibility
-export { mockUsers as mockUsers } from "../common/mock-data";
-export { useUsers as useAdminUsers } from "./useUsers";
+export * from "./use-admins";
+export * from "./use-banks";
+export * from "./use-transfers";
+export * from "./use-users";
 
 // Payment summary types and hooks
 export interface UserPaymentSummary {

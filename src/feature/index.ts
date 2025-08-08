@@ -1,15 +1,15 @@
-// Authentication
+// Authentication Features
 export * from "./auth";
 
 // User Features
-export * from "./user-dashboard";
-export * from "./user-transactions";
+export * from "./user/dashboard";
+export * from "./user/transactions";
 
 // Admin Features  
-export * from "./admin-dashboard";
-export * from "./admin-transfers";
-export * from "./admin-users";
-export * from "./manage-admins";
+export * from "./admin/dashboard";
+export * from "./admin/manage-admins";
+export * from "./admin/transfers";
+export * from "./admin/users";
 
 // Shared Features
-export * from "./settings";
+export * from "./shared";

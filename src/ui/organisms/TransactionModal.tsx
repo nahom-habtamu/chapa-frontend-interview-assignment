@@ -1,5 +1,5 @@
 import React from "react";
-import { Transaction } from "../../data/payment/types";
+import { Transaction } from "../../data/user/use-transactions/types";
 import { Badge } from "../atoms/Badge";
 import { Button } from "../atoms/Button";
 import { type IconName } from "../atoms/Icons";
@@ -24,8 +24,14 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
       payment: "arrowUpRight",
       payout: "arrowDownLeft",
       refund: "arrowDownLeft",
+      transfer: "arrowUpRight",
     };
     return icons[type] as IconName || "creditCard";
+  };
+
+  const getStatusVariant = (status: Transaction["status"]) => {
+    if (status === "processing") return "pending";
+    return status;
   };
 
   const formatCurrency = (amount: number, currency: string) => {
@@ -64,7 +70,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
           <Text variant="h3" className="font-bold text-gray-900">
             {formatCurrency(transaction.amount, transaction.currency)}
           </Text>
-          <Badge variant={transaction.status} icon={true} className="mt-2">
+                          <Badge variant={getStatusVariant(transaction.status)} icon={true} className="mt-2">
             {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
           </Badge>
         </div>

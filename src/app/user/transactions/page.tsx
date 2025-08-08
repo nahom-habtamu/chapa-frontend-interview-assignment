@@ -1,6 +1,6 @@
 "use client";
 
-import { UserTransactions } from "../../../feature/user-transactions";
+import { UserTransactions } from "../../../feature/user/transactions";
 
 export default function TransactionsPage() {
   return (

@@ -7,7 +7,9 @@ export const mockUsers: User[] = [
     email: "john.doe@example.com",
     role: "user",
     isActive: true,
+    isDeactivated: false,
     createdAt: "2024-01-15T10:30:00Z",
+    updatedAt: "2024-01-15T10:30:00Z",
   },
   {
     id: "2",
@@ -15,7 +17,9 @@ export const mockUsers: User[] = [
     email: "jane.smith@example.com",
     role: "user",
     isActive: true,
+    isDeactivated: false,
     createdAt: "2024-01-20T14:45:00Z",
+    updatedAt: "2024-01-20T14:45:00Z",
   },
   {
     id: "3",
@@ -23,7 +27,9 @@ export const mockUsers: User[] = [
     email: "michael.johnson@example.com",
     role: "user",
     isActive: false,
+    isDeactivated: false,
     createdAt: "2024-01-25T09:15:00Z",
+    updatedAt: "2024-01-25T09:15:00Z",
   },
   {
     id: "4",
@@ -31,7 +37,9 @@ export const mockUsers: User[] = [
     email: "sarah.wilson@example.com",
     role: "user",
     isActive: true,
+    isDeactivated: false,
     createdAt: "2024-02-01T16:20:00Z",
+    updatedAt: "2024-02-01T16:20:00Z",
   },
   {
     id: "5",
@@ -39,7 +47,9 @@ export const mockUsers: User[] = [
     email: "david.brown@example.com",
     role: "user",
     isActive: true,
+    isDeactivated: false,
     createdAt: "2024-02-05T11:10:00Z",
+    updatedAt: "2024-02-05T11:10:00Z",
   },
   {
     id: "6",
@@ -47,7 +57,9 @@ export const mockUsers: User[] = [
     email: "emily.davis@example.com",
     role: "user",
     isActive: false,
+    isDeactivated: false,
     createdAt: "2024-02-10T13:30:00Z",
+    updatedAt: "2024-02-10T13:30:00Z",
   },
   {
     id: "7",
@@ -55,7 +67,9 @@ export const mockUsers: User[] = [
     email: "robert.miller@example.com",
     role: "user",
     isActive: true,
+    isDeactivated: false,
     createdAt: "2024-02-12T08:45:00Z",
+    updatedAt: "2024-02-12T08:45:00Z",
   },
   {
     id: "8",
@@ -63,7 +77,9 @@ export const mockUsers: User[] = [
     email: "lisa.anderson@example.com",
     role: "user",
     isActive: true,
+    isDeactivated: false,
     createdAt: "2024-02-15T12:00:00Z",
+    updatedAt: "2024-02-15T12:00:00Z",
   },
 ];
 

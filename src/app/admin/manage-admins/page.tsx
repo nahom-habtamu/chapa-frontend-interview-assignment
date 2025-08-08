@@ -1,6 +1,6 @@
 "use client";
 
-import { ManageAdmins } from "../../../feature/manage-admins";
+import { ManageAdmins } from "../../../feature/admin/manage-admins";
 
 export default function ManageAdminsPage() {
   return (

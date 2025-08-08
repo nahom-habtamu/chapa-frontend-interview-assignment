@@ -1,3 +1,4 @@
-export * from "./useInitializePayments";
-export * from "./useTransactions";
-export * from "./useVerifyTransaction";
+export * from "./use-initialize-payments";
+export * from "./use-transactions";
+export * from "./use-verify-transaction";
+

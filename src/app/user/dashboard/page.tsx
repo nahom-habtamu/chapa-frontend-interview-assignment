@@ -1,6 +1,6 @@
 "use client";
 
-import { UserDashboard } from "../../../feature/user-dashboard/UserDashboard";
+import { UserDashboard } from "../../../feature/user/dashboard";
 
 export default function DashboardPage() {
   return (

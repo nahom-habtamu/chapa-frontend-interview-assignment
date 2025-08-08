@@ -1,5 +1,5 @@
 import React from "react";
-import { ChapaVerifyResponse, useVerifyTransaction } from "../../data/user/useVerifyTransaction";
+import { ChapaVerifyResponse, useVerifyTransaction } from "../../data/user/use-verify-transaction";
 import { Button } from "../atoms/Button";
 import { Icon, IconName } from "../atoms/Icons";
 import { Input } from "../atoms/Input";

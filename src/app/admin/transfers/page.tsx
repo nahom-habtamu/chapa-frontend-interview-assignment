@@ -1,6 +1,6 @@
 "use client";
 
-import { AdminTransfers } from "../../../feature/admin-transfers";
+import { AdminTransfers } from "../../../feature/admin/transfers";
 
 export default function TransfersPage() {
   return (

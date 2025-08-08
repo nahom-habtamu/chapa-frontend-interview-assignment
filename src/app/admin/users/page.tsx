@@ -1,6 +1,6 @@
 "use client";
 
-import { AdminUsers } from "../../../feature/admin-users";
+import { AdminUsers } from "../../../feature/admin/users";
 
 export default function AdminUsersPage() {
   return (

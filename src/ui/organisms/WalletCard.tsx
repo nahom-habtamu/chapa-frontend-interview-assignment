@@ -1,5 +1,5 @@
 import React from "react";
-import { WalletBalance } from "../../data/payment/types";
+import { WalletBalance } from "../../data/user/use-transactions/types";
 import { Button } from "../atoms/Button";
 import { Icon } from "../atoms/Icons";
 import { Text } from "../atoms/Text";
