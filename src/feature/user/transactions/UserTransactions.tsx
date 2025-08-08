@@ -1,4 +1,5 @@
 import React from "react";
+import { useCurrentUser } from "../../../data/auth/use-auth";
 import { Transaction, useTransactions } from "../../../data/user/use-transactions";
 import { Button } from "../../../ui/atoms/Button";
 import { Icon } from "../../../ui/atoms/Icons";
@@ -11,7 +12,8 @@ interface UserTransactionsProps {
 }
 
 export const UserTransactions: React.FC<UserTransactionsProps> = ({ className }) => {
-  const { transactions, loading: transactionsLoading } = useTransactions();
+  const { user } = useCurrentUser();
+  const { transactions, loading: transactionsLoading } = useTransactions(user?.id);
   const [selectedTransaction, setSelectedTransaction] = React.useState<Transaction | null>(null);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 

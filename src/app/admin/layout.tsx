@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useAuth } from "../../data/auth/use-auth";
+import { useAuth, useLogout } from "../../data/auth/use-auth";
 import { Footer } from "../../ui/molecules/Footer";
 import { Navbar, type NavItem } from "../../ui/molecules/Navbar";
 
@@ -39,8 +39,9 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const { user, logout, isSuperAdmin } = useAuth();
-  
+  const { user, isSuperAdmin } = useAuth();
+  const { logout } = useLogout();
+
   const handleLogout = () => {
     logout();
   };

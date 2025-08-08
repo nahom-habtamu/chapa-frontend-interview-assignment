@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useCurrentUser } from "../../../data/auth/use-auth";
 import { Transaction, useTransactions, useWalletBalance } from "../../../data/user/use-transactions";
 import { Icon } from "../../../ui/atoms/Icons";
 import { Text } from "../../../ui/atoms/Text";
@@ -19,8 +20,9 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ className }) => {
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { balance: walletBalance, loading: isLoadingBalance } = useWalletBalance();
-  const { transactions: allTransactions, loading: isLoadingTransactions } = useTransactions();
+  const { user } = useCurrentUser();
+  const { balance: walletBalance, loading: isLoadingBalance } = useWalletBalance(user?.id);
+  const { transactions: allTransactions, loading: isLoadingTransactions } = useTransactions(user?.id);
   const recentTransactions = allTransactions?.slice(0, 5) || [];
 
   const handleViewTransaction = (transaction: Transaction) => {

@@ -1,7 +1,7 @@
 "use client";
 
+import { useAuth, useLogout } from "@/data/auth/use-auth";
 import { usePathname } from "next/navigation";
-import { useAuth } from "../../data/auth/use-auth";
 import { Footer } from "../../ui/molecules/Footer";
 import { Navbar, type NavItem } from "../../ui/molecules/Navbar";
 
@@ -17,11 +17,6 @@ const userNavItems: NavItem[] = [
     icon: "creditCard",
   },
   {
-    label: "Profile",
-    href: "/user/profile",
-    icon: "user",
-  },
-  {
     label: "Settings",
     href: "/user/settings",
     icon: "settings",
@@ -34,24 +29,23 @@ export default function UserLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const { user, logout } = useAuth();
-  
+  const { user } = useAuth();
+  const { logout } = useLogout();
+
   const handleLogout = () => {
     logout();
   };
 
-  // Prepare user info for navbar
   const userInfo = user ? {
     name: user.name,
     email: user.email,
     role: user.role.charAt(0).toUpperCase() + user.role.slice(1),
   } : {
     name: "Guest User",
-    email: "guest@example.com",
+    email: "guest@example.com", 
     role: "Guest",
   };
 
-  // Set active state for nav items
   const navItemsWithActive = userNavItems.map(item => ({
     ...item,
     isActive: pathname === item.href,
@@ -59,7 +53,7 @@ export default function UserLayout({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar
+      <Navbar 
         navItems={navItemsWithActive}
         user={userInfo}
         onLogout={handleLogout}

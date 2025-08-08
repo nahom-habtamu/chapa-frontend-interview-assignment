@@ -17,7 +17,7 @@ export const VerifyTransactionForm: React.FC<VerifyTransactionFormProps> = ({
 }) => {
   const {
     form,
-    handleVerifyTransaction,
+    verifyTransaction,
     isLoading,
     error,
     isSuccess,
@@ -26,6 +26,7 @@ export const VerifyTransactionForm: React.FC<VerifyTransactionFormProps> = ({
 
   const {
     register,
+    handleSubmit,
     formState: { errors },
   } = form;
 
@@ -94,7 +95,7 @@ export const VerifyTransactionForm: React.FC<VerifyTransactionFormProps> = ({
         </Text>
       </div>
 
-      <form onSubmit={handleVerifyTransaction} className="space-y-4">
+      <form onSubmit={handleSubmit((data) => verifyTransaction(data))} className="space-y-4">
         <Input
           label="Transaction Reference"
           {...register("txRef")}

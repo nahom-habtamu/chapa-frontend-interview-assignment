@@ -46,13 +46,9 @@ export const useLogin = () => {
     },
   });
 
-  const handleLogin = form.handleSubmit((data) => {
-    mutation.mutate(data);
-  });
-
   return {
     form,
-    handleLogin,
+    login: mutation.mutate,
     isLoading: mutation.isPending,
     error: mutation.error?.message,
     isError: mutation.isError,
@@ -108,7 +104,6 @@ export const useLogout = () => {
 
 export const useAuth = () => {
   const { user, isLoading, isError, error, isAuthenticated } = useCurrentUser();
-  const { logout } = useLogout();
 
   const hasRole = (role: string | string[]) => {
     if (!user) return false;
@@ -127,7 +122,6 @@ export const useAuth = () => {
     isError,
     error,
     isAuthenticated,
-    logout,
     hasRole,
     isAdmin,
     isSuperAdmin,

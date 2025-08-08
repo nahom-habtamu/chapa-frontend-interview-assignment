@@ -45,13 +45,8 @@ export const useInitializePayment = () => {
     },
   });
 
-  const handleInitializePayment = form.handleSubmit((data) => {
-    mutation.mutate(data);
-  });
-
   return {
     form,
-    handleInitializePayment,
     initializePayment: mutation.mutate,
     isLoading: mutation.isPending,
     error: mutation.error?.message,
@@ -102,13 +97,8 @@ export const useQuickPayment = () => {
     },
   });
 
-  const handleQuickPayment = form.handleSubmit((data) => {
-    mutation.mutate(data);
-  });
-
   return {
     form,
-    handleQuickPayment,
     quickPayment: mutation.mutate,
     isLoading: mutation.isPending,
     error: mutation.error?.message,

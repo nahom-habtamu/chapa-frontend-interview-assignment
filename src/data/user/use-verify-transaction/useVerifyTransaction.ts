@@ -55,7 +55,7 @@ export const useVerifyTransaction = () => {
       if (result.isValid) {
         // Invalidate transactions to refetch latest data
         queryClient.invalidateQueries({ queryKey: ["user-transactions"] });
-        queryClient.invalidateQueries({ queryKey: ["user", "wallet", "balance"] });
+        queryClient.invalidateQueries({ queryKey: ["user-wallet-balance"] });
       }
     },
     onError: (error: Error) => {
@@ -63,13 +63,8 @@ export const useVerifyTransaction = () => {
     },
   });
 
-  const handleVerifyTransaction = form.handleSubmit((data) => {
-    mutation.mutate(data);
-  });
-
   return {
     form,
-    handleVerifyTransaction,
     verifyTransaction: mutation.mutate,
     isLoading: mutation.isPending,
     error: mutation.error?.message,
@@ -106,18 +101,13 @@ export const useQuickVerify = () => {
     onSuccess: (response) => {
       if (response.status === "success") {
         queryClient.invalidateQueries({ queryKey: ["user-transactions"] });
-        queryClient.invalidateQueries({ queryKey: ["user", "wallet", "balance"] });
+        queryClient.invalidateQueries({ queryKey: ["user-wallet-balance"] });
       }
     },
   });
 
-  const handleQuickVerify = form.handleSubmit((data) => {
-    mutation.mutate(data);
-  });
-
   return {
     form,
-    handleQuickVerify,
     quickVerify: mutation.mutate,
     isLoading: mutation.isPending,
     error: mutation.error?.message,

@@ -132,14 +132,11 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
       throw new Error("Account is not active. Please contact support.");
     }
 
-    const validPasswords: Record<string, string> = {
-      "john.doe@example.com": "user123",
-      "jane.smith@example.com": "user123",
-      "admin@chapa.co": "admin123",
-      "superadmin@chapa.co": "super123",
-    };
+    // Check password based on user role
+    const expectedPassword = user.role === "super_admin" ? "super123" :
+      user.role === "admin" ? "admin123" : "user123";
 
-    if (validPasswords[credentials.email] !== credentials.password) {
+    if (expectedPassword !== credentials.password) {
       throw new Error("Invalid email or password");
     }
 

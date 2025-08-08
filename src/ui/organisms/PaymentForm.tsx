@@ -24,7 +24,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
 }) => {
   const {
     form,
-    handleInitializePayment,
+    initializePayment,
     isLoading,
     error,
     isSuccess,
@@ -32,6 +32,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
 
   const {
     register,
+    handleSubmit,
     formState: { errors },
     watch,
     setValue,
@@ -59,7 +60,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
         </Text>
       </div>
 
-      <form onSubmit={handleInitializePayment} className="space-y-4">
+      <form onSubmit={handleSubmit((data) => initializePayment(data))} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             label="First Name"

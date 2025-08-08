@@ -11,19 +11,18 @@ interface LoginFormProps {
 export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const { mutate: login, isPending: isLoading, error } = useLogin();
+  const { login, isLoading, error, isSuccess } = useLogin();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    login(
-      { email, password },
-      {
-        onSuccess: () => {
-          onSuccess?.();
-        },
-      }
-    );
+    login({ email, password });
   };
+
+  React.useEffect(() => {
+    if (isSuccess && onSuccess) {
+      onSuccess();
+    }
+  }, [isSuccess, onSuccess]);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -70,7 +69,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       {error && (
         <div className="rounded-md bg-red-50 p-4">
           <Text variant="body" className="text-red-800">
-            {error.message}
+            {error}
           </Text>
         </div>
       )}
@@ -85,9 +84,18 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         </Button>
       </div>
 
-      <div className="text-center">
-        <Text variant="caption" className="text-gray-600">
-          Demo credentials: user@chapa.co / user123, admin@chapa.co / admin123
+      <div className="text-center space-y-1">
+        <Text variant="caption" className="text-gray-600 block font-medium">
+          Demo credentials:
+        </Text>
+        <Text variant="caption" className="text-gray-600 block">
+          Users: john.doe@example.com, jane.smith@example.com, sarah.wilson@example.com / user123
+        </Text>
+        <Text variant="caption" className="text-gray-600 block">
+          Admin: admin@chapa.co / admin123
+        </Text>
+        <Text variant="caption" className="text-gray-600 block">
+          Super Admin: superadmin@chapa.co / super123
         </Text>
       </div>
     </form>

@@ -1,9 +1,11 @@
 import { Transaction, TransactionStats, WalletBalance } from "./types";
 
-// Mock transaction data
+// Mock transaction data - User-specific transactions
 export const mockTransactions: Transaction[] = [
+  // John Doe's transactions (user ID: "1")
   {
     id: "1",
+    userId: "1",
     amount: 150.00,
     currency: "ETB",
     status: "success",
@@ -16,6 +18,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: "2",
+    userId: "1",
     amount: 75.50,
     currency: "ETB",
     status: "pending",
@@ -28,6 +31,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: "3",
+    userId: "1",
     amount: 200.00,
     currency: "USD",
     status: "success",
@@ -38,8 +42,11 @@ export const mockTransactions: Transaction[] = [
     created_at: "2024-01-13T09:15:00Z",
     updated_at: "2024-01-13T09:18:00Z",
   },
+
+  // Jane Smith's transactions (user ID: "2")
   {
     id: "4",
+    userId: "2",
     amount: 25.00,
     currency: "ETB",
     status: "failed",
@@ -52,6 +59,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: "5",
+    userId: "2",
     amount: 300.00,
     currency: "ETB",
     status: "success",
@@ -64,6 +72,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: "6",
+    userId: "2",
     amount: 50.00,
     currency: "USD",
     status: "cancelled",
@@ -74,8 +83,11 @@ export const mockTransactions: Transaction[] = [
     created_at: "2024-01-10T08:30:00Z",
     updated_at: "2024-01-10T08:35:00Z",
   },
+
+  // Sarah Wilson's transactions (user ID: "4")
   {
     id: "7",
+    userId: "4",
     amount: 320.75,
     currency: "ETB",
     status: "success",
@@ -88,6 +100,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: "8",
+    userId: "4",
     amount: 85.25,
     currency: "ETB",
     status: "success",
@@ -98,8 +111,11 @@ export const mockTransactions: Transaction[] = [
     created_at: "2024-01-08T12:15:00Z",
     updated_at: "2024-01-08T12:16:00Z",
   },
+
+  // David Brown's transactions (user ID: "5")
   {
     id: "9",
+    userId: "5",
     amount: 1200.00,
     currency: "ETB",
     status: "processing",
@@ -112,6 +128,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: "10",
+    userId: "5",
     amount: 45.50,
     currency: "ETB",
     status: "failed",
@@ -122,8 +139,11 @@ export const mockTransactions: Transaction[] = [
     created_at: "2024-01-06T07:30:00Z",
     updated_at: "2024-01-06T07:31:00Z",
   },
+
+  // Robert Miller's transactions (user ID: "7")
   {
     id: "11",
+    userId: "7",
     amount: 750.00,
     currency: "ETB",
     status: "success",
@@ -136,6 +156,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: "12",
+    userId: "7",
     amount: 125.00,
     currency: "ETB",
     status: "success",
@@ -146,9 +167,37 @@ export const mockTransactions: Transaction[] = [
     created_at: "2024-01-04T13:10:00Z",
     updated_at: "2024-01-04T13:15:00Z",
   },
+
+  // Lisa Anderson's transactions (user ID: "8")
+  {
+    id: "13",
+    userId: "8",
+    amount: 450.00,
+    currency: "ETB",
+    status: "success",
+    type: "payment",
+    description: "Utility bill payment",
+    reference: "TXN-2024-013",
+    recipient: "Utility Company",
+    created_at: "2024-01-03T14:20:00Z",
+    updated_at: "2024-01-03T14:22:00Z",
+  },
+  {
+    id: "14",
+    userId: "8",
+    amount: 180.00,
+    currency: "ETB",
+    status: "success",
+    type: "payment",
+    description: "Internet subscription",
+    reference: "TXN-2024-014",
+    recipient: "Internet Provider",
+    created_at: "2024-01-02T11:15:00Z",
+    updated_at: "2024-01-02T11:17:00Z",
+  },
 ];
 
-// Mock wallet balance
+// Mock wallet balance - will be user-specific
 export const mockWalletBalance: WalletBalance = {
   currency: "ETB",
   available: 2450.75,
@@ -156,7 +205,7 @@ export const mockWalletBalance: WalletBalance = {
   total: 3726.25,
 };
 
-// Mock transaction statistics
+// Mock transaction statistics - will be calculated per user
 export const mockTransactionStats: TransactionStats = {
   totalTransactions: mockTransactions.length,
   successfulTransactions: mockTransactions.filter(t => t.status === "success").length,
@@ -168,5 +217,5 @@ export const mockTransactionStats: TransactionStats = {
   averageTransaction: mockTransactions
     .filter(t => t.status === "success")
     .reduce((sum, t) => sum + t.amount, 0) /
-    mockTransactions.filter(t => t.status === "success").length,
+    Math.max(mockTransactions.filter(t => t.status === "success").length, 1),
 };

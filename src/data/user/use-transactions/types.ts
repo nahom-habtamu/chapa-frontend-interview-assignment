@@ -3,6 +3,7 @@ export type TransactionStatus = "pending" | "success" | "failed" | "cancelled" |
 
 export interface Transaction {
   id: string;
+  userId: string;
   amount: number;
   currency: string;
   status: TransactionStatus;
