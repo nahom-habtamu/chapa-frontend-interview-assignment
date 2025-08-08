@@ -85,7 +85,7 @@ export default function Transfers() {
             Access Denied
           </Text>
           <Text variant="caption" className="text-gray-400 mt-2">
-            You don't have permission to access this page
+            You don&apos;t have permission to access this page
           </Text>
         </div>
       </div>
