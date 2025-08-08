@@ -60,6 +60,28 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
         </Text>
       </div>
 
+      {error && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div className="flex items-center">
+            <Icon name="alertCircle" size="sm" className="text-red-500 mr-2" />
+            <Text variant="body" className="text-red-700">
+              {error}
+            </Text>
+          </div>
+        </div>
+      )}
+
+      {isSuccess && (
+        <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <div className="flex items-center">
+            <Icon name="check" size="sm" className="text-green-500 mr-2" />
+            <Text variant="body" className="text-green-700">
+              Payment initialized successfully! Redirecting to checkout...
+            </Text>
+          </div>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit((data) => initializePayment(data))} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input

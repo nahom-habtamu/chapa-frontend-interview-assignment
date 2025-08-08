@@ -32,33 +32,7 @@ export const VerifyTransactionForm: React.FC<VerifyTransactionFormProps> = ({
 
   React.useEffect(() => {
     if (isSuccess && result?.isValid && result.transaction) {
-      const mockResponse: ChapaVerifyResponse = {
-        message: "Transaction verified successfully",
-        status: "success",
-        data: {
-          first_name: result.transaction.customerName.split(' ')[0] || "",
-          last_name: result.transaction.customerName.split(' ')[1] || "",
-          email: result.transaction.customerEmail,
-          currency: result.transaction.currency,
-          amount: result.transaction.amount,
-          charge: 0,
-          mode: "test",
-          method: "bank_transfer",
-          type: "payment",
-          status: result.transaction.status,
-          reference: result.transaction.reference,
-          tx_ref: result.transaction.id,
-          customization: {
-            title: "Payment",
-            description: "Transaction verified",
-            logo: "",
-          },
-          meta: {},
-          created_at: result.transaction.createdAt,
-          updated_at: result.transaction.updatedAt,
-        },
-      };
-      onSuccess?.(mockResponse);
+      onSuccess?.(result);
     }
   }, [isSuccess, result, onSuccess]);
 

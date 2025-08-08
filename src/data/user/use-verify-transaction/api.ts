@@ -1,20 +1,10 @@
 import axios from "axios";
+import { chapaApiClient } from "../../common/chapa-api-client";
 import { ChapaVerifyResponse, TransactionVerificationData, VerificationResult } from "./types";
-
-const CHAPA_API_URL = "https://api.chapa.co/v1";
-const CHAPA_SECRET_KEY = process.env.NEXT_PUBLIC_CHAPA_SECRET_KEY || "CHASECK_TEST-test-secret-key";
-
-const chapaApi = axios.create({
-  baseURL: CHAPA_API_URL,
-  headers: {
-    "Authorization": `Bearer ${CHAPA_SECRET_KEY}`,
-    "Content-Type": "application/json",
-  },
-});
 
 export const verifyTransaction = async (txRef: string): Promise<ChapaVerifyResponse> => {
   try {
-    const response = await chapaApi.get<ChapaVerifyResponse>(`/transaction/verify/${txRef}`);
+    const response = await chapaApiClient.get<ChapaVerifyResponse>(`/transaction/verify/${txRef}`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -79,44 +69,3 @@ export const verifyAndValidateTransaction = async (
   }
 };
 
-export const mockVerifyTransaction = async (txRef: string): Promise<ChapaVerifyResponse> => {
-  await new Promise(resolve => setTimeout(resolve, 1000));
-
-  if (!txRef.startsWith("chapa_")) {
-    throw new Error("Invalid transaction reference format");
-  }
-
-  const mockStatuses = ["success", "pending", "failed"];
-  const randomStatus = mockStatuses[Math.floor(Math.random() * mockStatuses.length)];
-
-  if (randomStatus === "failed") {
-    throw new Error("Transaction not found or failed");
-  }
-
-  return {
-    message: "Transaction verified successfully",
-    status: "success",
-    data: {
-      first_name: "John",
-      last_name: "Doe",
-      email: "john.doe@example.com",
-      currency: "ETB",
-      amount: 100.00,
-      charge: 2.50,
-      mode: "test",
-      method: "mobile_money",
-      type: "payment",
-      status: randomStatus,
-      reference: `CHA_${Date.now()}`,
-      tx_ref: txRef,
-      customization: {
-        title: "Test Payment",
-        description: "Test transaction",
-        logo: "https://example.com/logo.png",
-      },
-      meta: {},
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-  };
-};

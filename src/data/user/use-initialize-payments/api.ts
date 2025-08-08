@@ -1,16 +1,6 @@
 import axios from "axios";
+import { chapaApiClient } from "../../common/chapa-api-client";
 import { ChapaInitializeRequest, ChapaInitializeResponse, PaymentInitializationData } from "./types";
-
-const CHAPA_API_URL = "https://api.chapa.co/v1";
-const CHAPA_SECRET_KEY = process.env.NEXT_PUBLIC_CHAPA_SECRET_KEY || "CHASECK_TEST-test-secret-key";
-
-const chapaApi = axios.create({
-  baseURL: CHAPA_API_URL,
-  headers: {
-    "Authorization": `Bearer ${CHAPA_SECRET_KEY}`,
-    "Content-Type": "application/json",
-  },
-});
 
 const generateTxRef = (): string => {
   const timestamp = Date.now();
@@ -40,7 +30,7 @@ export const initializePayment = async (data: PaymentInitializationData): Promis
       },
     };
 
-    const response = await chapaApi.post<ChapaInitializeResponse>(
+    const response = await chapaApiClient.post<ChapaInitializeResponse>(
       "/transaction/initialize",
       chapaRequest
     );
@@ -54,24 +44,3 @@ export const initializePayment = async (data: PaymentInitializationData): Promis
   }
 };
 
-export const mockInitializePayment = async (data: PaymentInitializationData): Promise<ChapaInitializeResponse> => {
-  await new Promise(resolve => setTimeout(resolve, 1000));
-
-  const txRef = generateTxRef();
-
-  if (data.amount < 0) {
-    throw new Error("Invalid amount");
-  }
-
-  if (data.amount > 100000) {
-    throw new Error("Amount exceeds maximum limit");
-  }
-
-  return {
-    message: "Payment initialized successfully",
-    status: "success",
-    data: {
-      checkout_url: `https://checkout.chapa.co/checkout/payment/${txRef}`,
-    },
-  };
-};

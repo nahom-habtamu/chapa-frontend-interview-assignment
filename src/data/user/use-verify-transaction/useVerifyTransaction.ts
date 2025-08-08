@@ -2,7 +2,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import {
-  mockVerifyTransaction,
   verifyAndValidateTransaction,
   verifyTransaction
 } from "./api";
@@ -28,27 +27,7 @@ export const useVerifyTransaction = () => {
 
   const mutation = useMutation({
     mutationFn: async (data: TransactionVerificationData) => {
-      try {
-        return await verifyAndValidateTransaction(data);
-      } catch (error) {
-        console.warn("Real API failed, using mock:", error);
-        const mockResponse = await mockVerifyTransaction(data.txRef);
-        return {
-          isValid: mockResponse.status === "success",
-          transaction: mockResponse.status === "success" ? {
-            id: mockResponse.data.tx_ref,
-            reference: mockResponse.data.reference,
-            amount: mockResponse.data.amount,
-            currency: mockResponse.data.currency,
-            status: mockResponse.data.status,
-            customerName: `${mockResponse.data.first_name} ${mockResponse.data.last_name}`,
-            customerEmail: mockResponse.data.email,
-            createdAt: mockResponse.data.created_at,
-            updatedAt: mockResponse.data.updated_at,
-          } : null,
-          error: mockResponse.status !== "success" ? "Transaction failed" : undefined,
-        };
-      }
+      return await verifyAndValidateTransaction(data);
     },
     onSuccess: (result) => {
       if (result.isValid) {
@@ -88,13 +67,8 @@ export const useQuickVerify = () => {
 
   const mutation = useMutation({
     mutationFn: async (data: QuickVerifyData) => {
-      try {
-        const response = await verifyTransaction(data.txRef);
-        return response;
-      } catch (error) {
-        console.warn("Real API failed, using mock:", error);
-        return await mockVerifyTransaction(data.txRef);
-      }
+      const response = await verifyTransaction(data.txRef);
+      return response;
     },
     onSuccess: (response) => {
       if (response.status === "success") {
@@ -123,12 +97,7 @@ export const useTransactionVerification = (txRef: string, enabled: boolean = tru
   const query = useQuery({
     queryKey: ["transaction", "verify", txRef],
     queryFn: async () => {
-      try {
-        return await verifyTransaction(txRef);
-      } catch (error) {
-        console.warn("Real API failed, using mock:", error);
-        return await mockVerifyTransaction(txRef);
-      }
+      return await verifyTransaction(txRef);
     },
     enabled: !!txRef && enabled,
     staleTime: 5 * 60 * 1000, // 5 minutes

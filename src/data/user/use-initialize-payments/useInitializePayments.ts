@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { initializePayment, mockInitializePayment } from "./api";
+import { initializePayment } from "./api";
 import { initializePaymentSchema, quickPaymentSchema, type InitializePaymentData, type QuickPaymentData } from "./schema";
 import { PaymentInitializationData } from "./types";
 
@@ -23,12 +23,7 @@ export const useInitializePayment = () => {
 
   const mutation = useMutation({
     mutationFn: async (data: PaymentInitializationData) => {
-      try {
-        return await initializePayment(data);
-      } catch (error) {
-        console.warn("Real API failed, using mock:", error);
-        return await mockInitializePayment(data);
-      }
+      return await initializePayment(data);
     },
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
@@ -78,12 +73,7 @@ export const useQuickPayment = () => {
         customerLastName: "Payment",
       };
 
-      try {
-        return await initializePayment(paymentData);
-      } catch (error) {
-        console.warn("Real API failed, using mock:", error);
-        return await mockInitializePayment(paymentData);
-      }
+      return await initializePayment(paymentData);
     },
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
