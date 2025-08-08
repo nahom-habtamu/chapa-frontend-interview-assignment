@@ -1,11 +1,9 @@
 import axios from "axios";
 import { ChapaVerifyResponse, TransactionVerificationData, VerificationResult } from "./types";
 
-// Chapa API configuration
 const CHAPA_API_URL = "https://api.chapa.co/v1";
 const CHAPA_SECRET_KEY = process.env.NEXT_PUBLIC_CHAPA_SECRET_KEY || "CHASECK_TEST-test-secret-key";
 
-// Create axios instance for Chapa API
 const chapaApi = axios.create({
   baseURL: CHAPA_API_URL,
   headers: {
@@ -14,7 +12,6 @@ const chapaApi = axios.create({
   },
 });
 
-// Verify Transaction with Chapa
 export const verifyTransaction = async (txRef: string): Promise<ChapaVerifyResponse> => {
   try {
     const response = await chapaApi.get<ChapaVerifyResponse>(`/transaction/verify/${txRef}`);
@@ -27,7 +24,6 @@ export const verifyTransaction = async (txRef: string): Promise<ChapaVerifyRespo
   }
 };
 
-// Verify and validate transaction
 export const verifyAndValidateTransaction = async (
   data: TransactionVerificationData
 ): Promise<VerificationResult> => {
@@ -44,7 +40,6 @@ export const verifyAndValidateTransaction = async (
 
     const transactionData = response.data;
 
-    // Validate expected amount if provided
     if (data.expectedAmount && transactionData.amount !== data.expectedAmount) {
       return {
         isValid: false,
@@ -53,7 +48,6 @@ export const verifyAndValidateTransaction = async (
       };
     }
 
-    // Validate expected currency if provided
     if (data.expectedCurrency && transactionData.currency !== data.expectedCurrency) {
       return {
         isValid: false,
@@ -85,12 +79,9 @@ export const verifyAndValidateTransaction = async (
   }
 };
 
-// Mock verify transaction for development
 export const mockVerifyTransaction = async (txRef: string): Promise<ChapaVerifyResponse> => {
-  // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 1000));
 
-  // Simulate different responses based on txRef pattern
   if (!txRef.startsWith("chapa_")) {
     throw new Error("Invalid transaction reference format");
   }

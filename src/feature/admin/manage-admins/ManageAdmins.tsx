@@ -35,7 +35,6 @@ export const ManageAdmins: React.FC<ManageAdminsProps> = ({ className }) => {
     isDeleting
   } = useAdmins();
 
-  // Redirect if not super admin
   if (!isSuperAdmin()) {
     router.push("/admin/dashboard");
     return null;

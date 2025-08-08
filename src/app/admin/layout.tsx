@@ -21,11 +21,11 @@ const getAdminNavItems = (isSuperAdmin: boolean): NavItem[] => [
     href: "/admin/manage-admins",
     icon: "shield" as const,
   }] : []),
-  {
+  ...(isSuperAdmin ? [{
     label: "Transfers",
     href: "/admin/transfers",
     icon: "arrowUpRight" as const,
-  },
+  }] : []),
   {
     label: "Settings",
     href: "/admin/settings",

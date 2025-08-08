@@ -29,10 +29,8 @@ export const useTransactions = (userId?: string) => {
     isError: query.isError,
     refetch: query.refetch,
 
-    // Actions
     cancelTransaction: cancelMutation.mutate,
 
-    // Action states
     isCancelling: cancelMutation.isPending,
     cancelError: cancelMutation.error?.message,
   };

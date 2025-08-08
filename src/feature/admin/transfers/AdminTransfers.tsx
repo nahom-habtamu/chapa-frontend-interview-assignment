@@ -27,12 +27,10 @@ export const AdminTransfers: React.FC<AdminTransfersProps> = ({ className }) => 
     reason: "",
   });
 
-  // Data hooks
   const { transfers, loading: transfersLoading } = useTransfers();
   const initiateMutation = useInitiateTransfer();
   const statusMutation = useCheckTransferStatus();
 
-  // Check access permissions
   if (!hasRole(["admin", "super_admin"])) {
     return (
       <div className={className}>
@@ -72,7 +70,6 @@ export const AdminTransfers: React.FC<AdminTransfersProps> = ({ className }) => 
       });
       setIsInitiateModalOpen(false);
     } catch (error) {
-      // Error handling is done by the mutation
       console.error("Transfer initiation failed:", error);
     }
   };

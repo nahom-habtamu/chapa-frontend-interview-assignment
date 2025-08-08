@@ -32,7 +32,6 @@ export const VerifyTransactionForm: React.FC<VerifyTransactionFormProps> = ({
 
   React.useEffect(() => {
     if (isSuccess && result?.isValid && result.transaction) {
-      // Create a mock ChapaVerifyResponse for onSuccess callback
       const mockResponse: ChapaVerifyResponse = {
         message: "Transaction verified successfully",
         status: "success",

@@ -61,14 +61,12 @@ export const useAdmins = () => {
     isError: query.isError,
     refetch: query.refetch,
 
-    // Actions
     createAdmin: createMutation.mutate,
     updateAdmin: updateMutation.mutate,
     deactivateAdmin: deactivateMutation.mutate,
     reactivateAdmin: reactivateMutation.mutate,
     deleteAdmin: deleteMutation.mutate,
 
-    // Action states
     isCreating: createMutation.isPending,
     isUpdating: updateMutation.isPending,
     isDeactivating: deactivateMutation.isPending,

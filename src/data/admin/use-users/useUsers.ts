@@ -51,13 +51,11 @@ export const useUsers = () => {
     isError: query.isError,
     refetch: query.refetch,
 
-    // Actions
     toggleUserStatus: toggleStatusMutation.mutate,
     deactivateUser: deactivateMutation.mutate,
     reactivateUser: reactivateMutation.mutate,
     deleteUser: deleteMutation.mutate,
 
-    // Action states
     isTogglingStatus: toggleStatusMutation.isPending,
     isDeactivating: deactivateMutation.isPending,
     isReactivating: reactivateMutation.isPending,

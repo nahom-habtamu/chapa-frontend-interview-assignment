@@ -1,8 +1,6 @@
 import { Transaction, TransactionStats, WalletBalance } from "./types";
 
-// Mock transaction data - User-specific transactions
 export const mockTransactions: Transaction[] = [
-  // John Doe's transactions (user ID: "1")
   {
     id: "1",
     userId: "1",
@@ -43,7 +41,7 @@ export const mockTransactions: Transaction[] = [
     updated_at: "2024-01-13T09:18:00Z",
   },
 
-  // Jane Smith's transactions (user ID: "2")
+
   {
     id: "4",
     userId: "2",
@@ -84,7 +82,7 @@ export const mockTransactions: Transaction[] = [
     updated_at: "2024-01-10T08:35:00Z",
   },
 
-  // Sarah Wilson's transactions (user ID: "4")
+
   {
     id: "7",
     userId: "4",
@@ -112,7 +110,7 @@ export const mockTransactions: Transaction[] = [
     updated_at: "2024-01-08T12:16:00Z",
   },
 
-  // David Brown's transactions (user ID: "5")
+
   {
     id: "9",
     userId: "5",
@@ -140,7 +138,7 @@ export const mockTransactions: Transaction[] = [
     updated_at: "2024-01-06T07:31:00Z",
   },
 
-  // Robert Miller's transactions (user ID: "7")
+
   {
     id: "11",
     userId: "7",
@@ -168,7 +166,7 @@ export const mockTransactions: Transaction[] = [
     updated_at: "2024-01-04T13:15:00Z",
   },
 
-  // Lisa Anderson's transactions (user ID: "8")
+
   {
     id: "13",
     userId: "8",
@@ -197,7 +195,6 @@ export const mockTransactions: Transaction[] = [
   },
 ];
 
-// Mock wallet balance - will be user-specific
 export const mockWalletBalance: WalletBalance = {
   currency: "ETB",
   available: 2450.75,
@@ -205,7 +202,6 @@ export const mockWalletBalance: WalletBalance = {
   total: 3726.25,
 };
 
-// Mock transaction statistics - will be calculated per user
 export const mockTransactionStats: TransactionStats = {
   totalTransactions: mockTransactions.length,
   successfulTransactions: mockTransactions.filter(t => t.status === "success").length,

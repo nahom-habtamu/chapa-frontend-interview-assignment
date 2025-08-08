@@ -3,7 +3,6 @@ export * from "./use-banks";
 export * from "./use-transfers";
 export * from "./use-users";
 
-// Payment summary types and hooks
 export interface UserPaymentSummary {
   userId: string;
   userName: string;
@@ -80,7 +79,6 @@ export const mockUserPaymentSummaries: UserPaymentSummary[] = [
   },
 ];
 
-// Payment summaries hook
 export const useUserPaymentSummaries = () => {
   return {
     paymentSummaries: mockUserPaymentSummaries,

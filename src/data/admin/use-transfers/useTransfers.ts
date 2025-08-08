@@ -23,7 +23,6 @@ export const useInitiateTransfer = () => {
   return useMutation({
     mutationFn: initiateTransfer,
     onSuccess: () => {
-      // Invalidate transfers list to refetch
       queryClient.invalidateQueries({ queryKey: ["admin", "transfers"] });
     },
   });

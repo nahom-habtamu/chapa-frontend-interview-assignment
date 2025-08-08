@@ -54,12 +54,10 @@ export const useBanks = () => {
     isError: query.isError,
     refetch: query.refetch,
 
-    // Mutations
     createBank: createMutation.mutate,
     updateBank: updateMutation.mutate,
     deleteBank: deleteMutation.mutate,
 
-    // Mutation states
     isCreating: createMutation.isPending,
     isUpdating: updateMutation.isPending,
     isDeleting: deleteMutation.isPending,

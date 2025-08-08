@@ -23,7 +23,6 @@ export const useInitializePayment = () => {
 
   const mutation = useMutation({
     mutationFn: async (data: PaymentInitializationData) => {
-      // Try real API first, fallback to mock
       try {
         return await initializePayment(data);
       } catch (error) {
@@ -32,10 +31,8 @@ export const useInitializePayment = () => {
       }
     },
     onSuccess: (response) => {
-      // Invalidate transactions to refetch latest data
       queryClient.invalidateQueries({ queryKey: ["user-transactions"] });
 
-      // Redirect to checkout URL
       if (response.data.checkout_url) {
         window.open(response.data.checkout_url, "_blank");
       }

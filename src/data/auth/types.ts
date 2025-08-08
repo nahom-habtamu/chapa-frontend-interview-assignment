@@ -1,4 +1,3 @@
-// Re-export common types for backward compatibility
 export {
   type ApiError, type AuthResponse, type AuthState, type AuthToken,
   type LoginCredentials,

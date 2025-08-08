@@ -3,12 +3,12 @@ import { apiClient } from "../common/api-client";
 import { mockUsers } from "../common/mock-data";
 import { AuthResponse, LoginCredentials, User } from "./types";
 
-// Use mock users from common, but filter for active login users
+
 const mockLoginUsers = mockUsers.filter(user =>
   !user.isDeactivated && user.isActive
 ).map(user => ({
   ...user,
-  // Add default test passwords for mock login
+
   password: user.role === "super_admin" ? "super123" :
     user.role === "admin" ? "admin123" : "user123"
 }));
@@ -30,10 +30,8 @@ export const getCurrentUserFromAPI = async (token: string): Promise<User> => {
 
 export const getCurrentUser = async (token: string): Promise<User> => {
   try {
-    // Try real API first
     return await getCurrentUserFromAPI(token);
   } catch (error) {
-    // Fallback to mock for development
     console.warn("API failed, using mock user:", error);
     await delay(500);
     const user = decodeToken(token);
@@ -41,7 +39,6 @@ export const getCurrentUser = async (token: string): Promise<User> => {
       throw new Error("Invalid token");
     }
 
-    // Check if user is deactivated
     if (user.isDeactivated) {
       throw new Error("User account has been deactivated");
     }
@@ -95,7 +92,7 @@ export const decodeToken = (token: string): User | null => {
   }
 };
 
-// Real API call for login
+
 export const loginUserAPI = async (credentials: LoginCredentials): Promise<AuthResponse> => {
   try {
     const response = await apiClient.post<AuthResponse>("/auth/login", credentials);
@@ -110,10 +107,8 @@ export const loginUserAPI = async (credentials: LoginCredentials): Promise<AuthR
 
 export const loginUser = async (credentials: LoginCredentials): Promise<AuthResponse> => {
   try {
-    // Try real API first
     return await loginUserAPI(credentials);
   } catch (error) {
-    // Fallback to mock for development
     console.warn("API failed, using mock login:", error);
 
     await delay(1000);
@@ -123,7 +118,6 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
       throw new Error("Invalid email or password");
     }
 
-    // Check if user is deactivated
     if (user.isDeactivated) {
       throw new Error("Account has been deactivated. Please contact support.");
     }
@@ -132,7 +126,7 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
       throw new Error("Account is not active. Please contact support.");
     }
 
-    // Check password based on user role
+
     const expectedPassword = user.role === "super_admin" ? "super123" :
       user.role === "admin" ? "admin123" : "user123";
 

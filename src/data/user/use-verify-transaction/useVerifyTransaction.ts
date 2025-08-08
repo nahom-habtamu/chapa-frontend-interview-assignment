@@ -32,7 +32,6 @@ export const useVerifyTransaction = () => {
         return await verifyAndValidateTransaction(data);
       } catch (error) {
         console.warn("Real API failed, using mock:", error);
-        // For mock, just verify the transaction exists
         const mockResponse = await mockVerifyTransaction(data.txRef);
         return {
           isValid: mockResponse.status === "success",
@@ -53,7 +52,6 @@ export const useVerifyTransaction = () => {
     },
     onSuccess: (result) => {
       if (result.isValid) {
-        // Invalidate transactions to refetch latest data
         queryClient.invalidateQueries({ queryKey: ["user-transactions"] });
         queryClient.invalidateQueries({ queryKey: ["user-wallet-balance"] });
       }
@@ -121,7 +119,6 @@ export const useQuickVerify = () => {
   };
 };
 
-// Hook to verify a specific transaction by ID
 export const useTransactionVerification = (txRef: string, enabled: boolean = true) => {
   const query = useQuery({
     queryKey: ["transaction", "verify", txRef],
