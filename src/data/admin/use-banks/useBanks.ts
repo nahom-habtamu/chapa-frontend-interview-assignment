@@ -7,7 +7,7 @@ export const useBanks = () => {
   const queryClient = useQueryClient();
 
   const query = useQuery({
-    queryKey: ["admin-banks"],
+    queryKey: ["banks"],
     queryFn: async () => {
       try {
         const chapaResponse = await getBanksFromChapa();
@@ -28,7 +28,7 @@ export const useBanks = () => {
   const createMutation = useMutation({
     mutationFn: createBank,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-banks"] });
+      queryClient.invalidateQueries({ queryKey: ["banks"] });
     },
   });
 
@@ -36,14 +36,14 @@ export const useBanks = () => {
     mutationFn: ({ id, bank }: { id: string; bank: Partial<Bank> }) =>
       updateBank(id, bank),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-banks"] });
+      queryClient.invalidateQueries({ queryKey: ["banks"] });
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: deleteBank,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-banks"] });
+      queryClient.invalidateQueries({ queryKey: ["banks"] });
     },
   });
 

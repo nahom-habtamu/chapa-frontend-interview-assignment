@@ -1,8 +1,6 @@
 import React from "react";
 import { useLogin } from "../../../data/auth/use-auth";
-import { Button } from "../../../ui/atoms/Button";
-import { Input } from "../../../ui/atoms/Input";
-import { Text } from "../../../ui/atoms/Text";
+import { Button, Input, Text } from "../../../ui/atoms";
 
 interface LoginFormProps {
   onSuccess?: () => void;

@@ -9,7 +9,7 @@ export const useTransactions = (userId?: string) => {
   const queryClient = useQueryClient();
 
   const query = useQuery({
-    queryKey: ["user-transactions", userId],
+    queryKey: ["transactions", userId],
     queryFn: () => getTransactions(userId),
     staleTime: 1 * 60 * 1000,
     enabled: !!userId,
@@ -18,7 +18,7 @@ export const useTransactions = (userId?: string) => {
   const cancelMutation = useMutation({
     mutationFn: (id: string) => cancelTransaction(id, userId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user-transactions", userId] });
+      queryClient.invalidateQueries({ queryKey: ["transactions", userId] });
     },
   });
 
@@ -40,7 +40,7 @@ export const useTransactions = (userId?: string) => {
 
 export const useWalletBalance = (userId?: string) => {
   const query = useQuery({
-    queryKey: ["user-wallet-balance", userId],
+    queryKey: ["wallet", userId],
     queryFn: () => getWalletBalance(userId),
     staleTime: 30 * 1000,
     enabled: !!userId,

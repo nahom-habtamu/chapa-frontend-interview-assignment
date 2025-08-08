@@ -3,7 +3,7 @@ import { checkTransferStatus, getTransfers, initiateTransfer } from "./api";
 
 export const useTransfers = () => {
   const query = useQuery({
-    queryKey: ["admin-transfers"],
+    queryKey: ["transfers"],
     queryFn: getTransfers,
     staleTime: 2 * 60 * 1000,
   });
@@ -23,7 +23,7 @@ export const useInitiateTransfer = () => {
   return useMutation({
     mutationFn: initiateTransfer,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "transfers"] });
+      queryClient.invalidateQueries({ queryKey: ["transfers"] });
     },
   });
 };

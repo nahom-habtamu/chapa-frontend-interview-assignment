@@ -13,7 +13,7 @@ export const useAdmins = () => {
   const queryClient = useQueryClient();
 
   const query = useQuery({
-    queryKey: ["admin-admins"],
+    queryKey: ["admins"],
     queryFn: getAdmins,
     staleTime: 2 * 60 * 1000,
   });
@@ -21,7 +21,7 @@ export const useAdmins = () => {
   const createMutation = useMutation({
     mutationFn: createAdmin,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-admins"] });
+      queryClient.invalidateQueries({ queryKey: ["admins"] });
     },
   });
 
@@ -29,28 +29,28 @@ export const useAdmins = () => {
     mutationFn: ({ id, admin }: { id: string; admin: Partial<AdminUser> }) =>
       updateAdmin(id, admin),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-admins"] });
+      queryClient.invalidateQueries({ queryKey: ["admins"] });
     },
   });
 
   const deactivateMutation = useMutation({
     mutationFn: deactivateAdmin,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-admins"] });
+      queryClient.invalidateQueries({ queryKey: ["admins"] });
     },
   });
 
   const reactivateMutation = useMutation({
     mutationFn: reactivateAdmin,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-admins"] });
+      queryClient.invalidateQueries({ queryKey: ["admins"] });
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: deleteAdmin,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-admins"] });
+      queryClient.invalidateQueries({ queryKey: ["admins"] });
     },
   });
 

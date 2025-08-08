@@ -19,7 +19,13 @@ export const toggleUserStatus = async (id: string): Promise<BaseUser> => {
     throw new Error("User not found");
   }
 
-  return { ...user, isActive: !user.isActive };
+  const newIsActive = !user.isActive;
+  return {
+    ...user,
+    isActive: newIsActive,
+    isDeactivated: !newIsActive,
+    updatedAt: new Date().toISOString()
+  };
 };
 
 export const deactivateUser = async (id: string): Promise<BaseUser> => {

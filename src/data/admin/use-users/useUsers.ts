@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { BaseUser } from "../../common/types";
 import {
   deactivateUser,
   deleteUser,
@@ -11,36 +12,41 @@ export const useUsers = () => {
   const queryClient = useQueryClient();
 
   const query = useQuery({
-    queryKey: ["admin-users"],
+    queryKey: ["users"],
     queryFn: getUsers,
     staleTime: 2 * 60 * 1000,
   });
 
   const toggleStatusMutation = useMutation({
     mutationFn: toggleUserStatus,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+    onSuccess: (updatedUser) => {
+      queryClient.setQueryData(["users"], (oldData: BaseUser[]) => {
+        if (!oldData) return oldData;
+        return oldData.map((user: BaseUser) =>
+          user.id === updatedUser.id ? updatedUser : user
+        );
+      });
     },
   });
 
   const deactivateMutation = useMutation({
     mutationFn: deactivateUser,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
     },
   });
 
   const reactivateMutation = useMutation({
     mutationFn: reactivateUser,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: deleteUser,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
     },
   });
 

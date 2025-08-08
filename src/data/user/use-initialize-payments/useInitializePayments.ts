@@ -31,7 +31,7 @@ export const useInitializePayment = () => {
       }
     },
     onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: ["user-transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
 
       if (response.data.checkout_url) {
         window.open(response.data.checkout_url, "_blank");
@@ -86,7 +86,7 @@ export const useQuickPayment = () => {
       }
     },
     onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: ["user-transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
 
       if (response.data.checkout_url) {
         window.open(response.data.checkout_url, "_blank");

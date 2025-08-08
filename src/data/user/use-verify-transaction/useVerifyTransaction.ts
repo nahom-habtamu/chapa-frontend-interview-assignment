@@ -52,8 +52,8 @@ export const useVerifyTransaction = () => {
     },
     onSuccess: (result) => {
       if (result.isValid) {
-        queryClient.invalidateQueries({ queryKey: ["user-transactions"] });
-        queryClient.invalidateQueries({ queryKey: ["user-wallet-balance"] });
+        queryClient.invalidateQueries({ queryKey: ["transactions"] });
+        queryClient.invalidateQueries({ queryKey: ["wallet"] });
       }
     },
     onError: (error: Error) => {
@@ -98,8 +98,8 @@ export const useQuickVerify = () => {
     },
     onSuccess: (response) => {
       if (response.status === "success") {
-        queryClient.invalidateQueries({ queryKey: ["user-transactions"] });
-        queryClient.invalidateQueries({ queryKey: ["user-wallet-balance"] });
+        queryClient.invalidateQueries({ queryKey: ["transactions"] });
+        queryClient.invalidateQueries({ queryKey: ["wallet"] });
       }
     },
   });

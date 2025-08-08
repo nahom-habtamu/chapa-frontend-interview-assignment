@@ -16,13 +16,7 @@ export const UserTable: React.FC<UserTableProps> = ({
   onToggleStatus,
   loading = false,
 }) => {
-  const formatDate = (dateString: string) => {
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    }).format(new Date(dateString));
-  };
+
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200/60 overflow-hidden">
@@ -43,13 +37,7 @@ export const UserTable: React.FC<UserTableProps> = ({
                 User
               </th>
               <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Email
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Status
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Joined
               </th>
               <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
@@ -71,15 +59,10 @@ export const UserTable: React.FC<UserTableProps> = ({
                         {user.name}
                       </Text>
                       <Text variant="caption" className="text-gray-500">
-                        ID: {user.id}
+                        {user.email}
                       </Text>
                     </div>
                   </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <Text variant="body" className="text-gray-900">
-                    {user.email}
-                  </Text>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <Badge 
@@ -90,17 +73,16 @@ export const UserTable: React.FC<UserTableProps> = ({
                   </Badge>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <Text variant="body" className="text-gray-900">
-                    {formatDate(user.createdAt)}
-                  </Text>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
                   <Button
-                    variant={user.isActive ? "outline" : "secondary"}
+                    variant={user.isActive ? "outline" : "default"}
                     size="sm"
                     onClick={() => onToggleStatus(user.id)}
                     disabled={loading}
-                    className="flex items-center space-x-2"
+                    className={`flex items-center space-x-2 cursor-pointer hover:shadow-md transition-all duration-200 min-w-[100px] ${
+                      !user.isActive 
+                        ? "bg-green-600 text-white hover:bg-green-700 border-green-600" 
+                        : ""
+                    }`}
                   >
                     <Icon 
                       name={user.isActive ? "x" : "check"} 
